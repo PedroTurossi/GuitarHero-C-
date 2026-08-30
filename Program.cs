@@ -15,10 +15,11 @@ class Program {
 
         // CONFIG
 
-
+            // fazer um "nível" onde as notas vem do meio, do centro da tela
+            // e a partir das letras exibidas na tela, o jogador precisa "marcar" no teclado onde elas aparecem.
 
             Raylib.InitWindow(larguraTela, alturaTela, "Jogasso");
-            Raylib.SetTargetFPS(60);
+            Raylib.SetTargetFPS(120);
 
 
         while(!Raylib.WindowShouldClose()) {

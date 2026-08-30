@@ -2,7 +2,15 @@ using System.Numerics;
 using Raylib_cs;
 
 class GameScreen : IScreen {
-    static List<IGameObject> objetosDoJogo = new();
+    public static List<IGameObject> objetosDoJogo = new();
+
+    List<List<IGameObject>> listaDeNotasDoJogo = new();
+    public static List<IGameObject> listaNotasVerdes = new();
+    public static List<IGameObject> listaNotasVermelhas = new();
+    public static List<IGameObject> listaNotasAmarelas = new();
+    public static List<IGameObject> listaNotasAzuis = new();
+    public static List<IGameObject> listaNotasLaranjas = new();
+
     float timer = 0f;
     public static int offsetY = 40;
     public static int offsetX = 120;
@@ -23,27 +31,62 @@ class GameScreen : IScreen {
         
         Alvo alvoLaranja = new Alvo(4); 
         objetosDoJogo.Add(alvoLaranja);
+
+        // listaDeNotasDoJogo.Add(listaNotasVerdes);
+        // listaDeNotasDoJogo.Add(listaNotasVermelhas);
+        // listaDeNotasDoJogo.Add(listaNotasAmarelas);
+        // listaDeNotasDoJogo.Add(listaNotasAzuis);
+        // listaDeNotasDoJogo.Add(listaNotasLaranjas);
     }
 
 
     // ***  UPDATE   ***
     public void Update(float deltaTime) {
-        if (Raylib.IsMouseButtonPressed(MouseButton.Left)) {
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsKeyPressed(KeyboardKey.Space)) {
             CriarNovaBolinha();
         }
 
-        // timer += deltaTime;
-        // if (timer >= 0.2f) {
-        //     timer =- 0.2f;
-        //     CriarNovaBolinha();
-        // }
+        timer += deltaTime;
+        if (timer >= 0.2f) {
+            timer =- 0.2f;
+            CriarNovaBolinha();
+        }
         // LoopArquivo();
 
         foreach (IGameObject objeto in objetosDoJogo) {
+            // Console.WriteLine(objeto.GetHashCode());
             objeto.Update(deltaTime);
         }
 
+        // Eu ainda vou achar uma forma mais eficiente de fazer isso, mil desculpas eu do futuro. mas eu AINDA vou fazer
+        // foreach (List<IGameObject> listaNotas in listaDeNotasDoJogo) {
+        //     foreach (IGameObject notas in listaNotas) {
+        //         notas.Update(deltaTime);
+        //     }
+        // }    
+
+        foreach (IGameObject objeto in listaNotasVerdes) {
+            objeto.Update(deltaTime);
+        }
+    
+        foreach (IGameObject objeto in listaNotasVermelhas) {
+            objeto.Update(deltaTime);
+        }
+    
+        foreach (IGameObject objeto in listaNotasAmarelas) {
+            objeto.Update(deltaTime);
+        }
+    
+        foreach (IGameObject objeto in listaNotasAzuis) {
+            objeto.Update(deltaTime);
+        }
+    
+        foreach (IGameObject objeto in listaNotasLaranjas  ) {
+            objeto.Update(deltaTime);
+        }
+    
     }
+
 
     // --=< DRAW >=-- 
     public void Draw() {
@@ -53,6 +96,43 @@ class GameScreen : IScreen {
             objeto.Draw();
         }
         objetosDoJogo.RemoveAll(objeto => objeto.excluirObjeto);
+
+        // foreach (List<IGameObject> listaNotas in listaDeNotasDoJogo) {
+        //     foreach (IGameObject notas in listaNotas) {
+        //         notas.Draw();
+        //     }
+        //     listaNotas.RemoveAll(notas => notas.excluirObjeto);
+        // }        
+
+        foreach (IGameObject objeto in listaNotasVerdes) {
+            objeto.Draw();
+        }
+        listaNotasVerdes.RemoveAll(objeto => objeto.excluirObjeto);
+
+        foreach (IGameObject objeto in listaNotasVermelhas) {
+            objeto.Draw();
+        }
+        listaNotasVermelhas.RemoveAll(objeto => objeto.excluirObjeto);
+
+        foreach (IGameObject objeto in listaNotasAmarelas) {
+            objeto.Draw();
+        }
+        listaNotasAmarelas.RemoveAll(objeto => objeto.excluirObjeto);
+
+        foreach (IGameObject objeto in listaNotasAzuis) {
+            objeto.Draw();
+        }
+        listaNotasAzuis.RemoveAll(objeto => objeto.excluirObjeto);
+
+        foreach (IGameObject objeto in listaNotasAzuis) {
+            objeto.Draw();
+        }
+        listaNotasAzuis.RemoveAll(objeto => objeto.excluirObjeto);
+
+        foreach (IGameObject objeto in listaNotasLaranjas) {
+            objeto.Draw();
+        }
+        listaNotasLaranjas.RemoveAll(objeto => objeto.excluirObjeto);
     }
 
 
@@ -60,9 +140,13 @@ class GameScreen : IScreen {
 
 
     static void CriarNovaBolinha() {
+        // alterar número dentro de "nota" para colocar de uma trilha específica (Verde(0), Vermelho, Amarelo, Azul e Laranja(4))
         Nota novaBolinha = new Nota();
-        objetosDoJogo.Add(novaBolinha);
+        // objetosDoJogo.Add(novaBolinha);
+        // listaNotasVerdes.Add(novaBolinha);
     }
+
+    static void CriarNovaLinha() {}
 
     //     static void LoopArquivo() {
     //     // "notas" consiste em uma lista de lista de floats, onde cada lista de lista representa um conjunto de "nota"

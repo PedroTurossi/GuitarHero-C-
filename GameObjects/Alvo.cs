@@ -2,20 +2,26 @@ using System.Numerics;
 using Raylib_cs;
 
 class Alvo : IGameObject {
+    
+    static float toleranciaHitRuim = 20f;
+    static float toleranciaHitBom = 10f;
+    static float toleranciaHitOtimo = 8f;
+    
     public bool excluirObjeto { get; set; } = false;
     public Color cor { get; set; }
+    int idDeCor;
     public Vector2 posicaoObjeto { get; set; }
     Texture2D texturaNota;
 
 
-    float raioAlvo = 8f;
+    float raioAlvo = 14f;
 
     public Alvo (int id) {
         float posicaoX = GameScreen.offsetX + ((id==0) ? 0 : ( ((Program.larguraTela - (GameScreen.offsetX*2)) / (4)) * id ));
         float posicaoY = Program.alturaTela - GameScreen.offsetY;
 
         posicaoObjeto = new Vector2((int) posicaoX, (int) posicaoY);
-        
+        idDeCor = id;
         switch(id) {
             case 0:
                 cor = Color.Green;
@@ -37,20 +43,70 @@ class Alvo : IGameObject {
                 cor = Color.Orange;
                 break;
         }
-        // Console.WriteLine("OIII");
+        // Console.WriteLine("## INICIALIZANDO ALVO - " + id);
         // Image imagem = Raylib.LoadImage("Files/NotaBase.png");
         // Raylib.ImageColorReplace(ref imagem, Color.White, cor);
         // texturaNota = Raylib.LoadTextureFromImage(imagem);
         // Raylib.UnloadImage(imagem);
     }
 
+    public void Update(float dt) {
+        List<IGameObject> listaDeNotas = new List<IGameObject>();
+        KeyboardKey teclaDoAlvo = KeyboardKey.Space;
+
+        switch(idDeCor) {
+            case 0:
+                listaDeNotas = GameScreen.listaNotasVerdes;
+                teclaDoAlvo = KeyboardKey.A;
+
+                break;
+            
+            case 1:
+                listaDeNotas = GameScreen.listaNotasVermelhas;
+                teclaDoAlvo = KeyboardKey.S;
+                break;
+
+            case 2:
+                listaDeNotas = GameScreen.listaNotasAmarelas;
+                teclaDoAlvo = KeyboardKey.J;
+                break;
+            
+            case 3:
+                listaDeNotas = GameScreen.listaNotasAzuis;
+                teclaDoAlvo = KeyboardKey.K;
+                break;
+            
+            case 4:
+                listaDeNotas = GameScreen.listaNotasLaranjas;
+                teclaDoAlvo = KeyboardKey.L;
+                break;
+        }
+        // Console.WriteLine(idDeCor);
+
+        if(Raylib.IsKeyDown(teclaDoAlvo)) {
+            foreach(IGameObject nota in listaDeNotas) {
+                if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
+                    if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
+                        if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
+                            Console.WriteLine("Foda");
+                        } else{
+                            Console.WriteLine("bom");
+                        }
+                    } else {
+                        Console.WriteLine("ruim");
+                    }
+                    nota.excluirObjeto = true;
+                } else {
+                    // perder pontos lá
+                }
+            }
+        }
+    }
+
     public void Draw() {
         // Raylib.DrawTexture(texturaNota, (int)posicaoObjeto.X, (int)posicaoObjeto.Y, Color.White);
         // Raylib.UnloadTexture(texturaNota);
         Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, raioAlvo, cor);
-
     }
 
-    public void Update(float dt) {
-    }
 }
