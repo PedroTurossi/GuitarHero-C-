@@ -11,9 +11,10 @@ class GameScreen : IScreen {
     public static List<IGameObject> listaNotasAzuis = new();
     public static List<IGameObject> listaNotasLaranjas = new();
 
-    float timer = 0f;
+    public static float timer = 0f;
     public static int offsetY = 40;
     public static int offsetX = 120;
+    static LeitorDeMusicas leitorDeMusica;
 
 
     public GameScreen () {
@@ -32,6 +33,9 @@ class GameScreen : IScreen {
         Alvo alvoLaranja = new Alvo(4); 
         objetosDoJogo.Add(alvoLaranja);
 
+        leitorDeMusica = new LeitorDeMusicas("Files/RapDoMinecraft.json");
+
+
         // listaDeNotasDoJogo.Add(listaNotasVerdes);
         // listaDeNotasDoJogo.Add(listaNotasVermelhas);
         // listaDeNotasDoJogo.Add(listaNotasAmarelas);
@@ -46,12 +50,15 @@ class GameScreen : IScreen {
             CriarNovaBolinha();
         }
 
-        timer += deltaTime;
-        if (timer >= 0.2f) {
-            timer =- 0.2f;
-            CriarNovaBolinha();
-        }
-        // LoopArquivo();
+    // dps ajustar o timer ou o arquivo pra não precisa multiplicar por 1000
+        timer += deltaTime * 1000;
+        // if (timer >= 0.2f) {
+        //     timer =- 0.2f;
+        //     CriarNovaBolinha();
+        // }
+        //  O que antes era o "LoopArquivo();" agora ta dentro de leitordemusica, e ta acessando o timer...
+
+        leitorDeMusica.UpdateMusica();
 
         foreach (IGameObject objeto in objetosDoJogo) {
             // Console.WriteLine(objeto.GetHashCode());
@@ -148,26 +155,4 @@ class GameScreen : IScreen {
 
     static void CriarNovaLinha() {}
 
-    //     static void LoopArquivo() {
-    //     // "notas" consiste em uma lista de lista de floats, onde cada lista de lista representa um conjunto de "nota"
-    //     // e cada lista de float (ou seja, cada nota), tem 3 números.
-    //     // o primeiro significa o tempo até ela ser reproduzida, sendo que o tempo reinicia a cada nota. ou seja: 0.1 0.1 0.1 acontecem com 0.1 de espaçamento entre as notas
-    //     // o segundo número significa "up" (1) ou "down" (2), representando em qual dos alvos a nota vai mirar
-    //     // o terceiro numero significa a quantidade de vezes que essa nota se repete (3 notas de 0.2 segundos seguindas fica [0.2, 1, 3])
-    //     if(notas[0][0] == -1 || notas[0][1] == 0) {
-    //         // ?
-    //     } else {
-    //         if (timer >= notas[0][0]) {
-    //             if (notas[0][2] == 0) {
-    //                 notas.RemoveAt(0);
-    //             } else {
-    //                 CriarNovaBolinha();
-    //                 notas[0][2]--;
-    //                 timer -= notas[0][0];
-    //             }
-                
-    //         }            
-    //     }
-
-    // }
 }

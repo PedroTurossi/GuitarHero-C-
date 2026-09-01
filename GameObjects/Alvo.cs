@@ -3,9 +3,9 @@ using Raylib_cs;
 
 class Alvo : IGameObject {
     
-    static float toleranciaHitRuim = 20f;
-    static float toleranciaHitBom = 10f;
-    static float toleranciaHitOtimo = 8f;
+    public static float toleranciaHitRuim = 23f;
+    public static float toleranciaHitBom = 12f;
+    public static float toleranciaHitOtimo = 6f;
     
     public bool excluirObjeto { get; set; } = false;
     public Color cor { get; set; }
@@ -88,16 +88,15 @@ class Alvo : IGameObject {
                 if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
                     if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
                         if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
-                            Console.WriteLine("Foda");
+                            Console.WriteLine("++Foda");
                         } else{
-                            Console.WriteLine("bom");
+                            Console.WriteLine("+bom");
                         }
                     } else {
-                        Console.WriteLine("ruim");
+                        Console.WriteLine("-ruim");
                     }
                     nota.excluirObjeto = true;
                 } else {
-                    // perder pontos lá
                 }
             }
         }

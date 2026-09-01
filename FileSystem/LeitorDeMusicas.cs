@@ -1,0 +1,60 @@
+using System.Drawing;
+using System.IO;
+using System.Text.Json;
+
+
+
+public class Musica {
+    public String nomeMusica {get; set;}
+    public List<List<float>> notas {get; set;} = new();
+}
+
+//  ------------------------------ //
+
+class LeitorDeMusicas {
+    public bool temporaria = true;
+
+    public static Musica musica;
+    public LeitorDeMusicas(String caminhoDoArquivo) {
+        string jsonString = File.ReadAllText(caminhoDoArquivo);
+        Musica arq = JsonSerializer.Deserialize<Musica>(jsonString);
+        arq.notas.Add([-1f, 0f, 0f]);
+        musica = arq;
+    }
+
+    public static void UpdateLoopMusica() {
+        // "notas" consiste em uma lista de lista de floats, onde cada lista de lista representa um conjunto de "nota"
+        // e cada lista de float (ou seja, cada nota), tem 3 números. o primeiro significa o tempo até ela ser reproduzida, sendo
+        // que o tempo reinicia a cada nota. ou seja: 0.1 0.1 0.1 acontecem com 0.1 de espaçamento entre as notas
+        // o segundo número significa "up" (1) ou "down" (2), representando em qual dos alvos a nota vai mirar
+        // 
+        if(musica.notas[0][0] == -1 || musica.notas[0][1] == 0) {
+            // arquivo acabou
+        } else {
+            if (GameScreen.timer >= musica.notas[0][0]) {
+                    Nota novaNota = new Nota((int)musica.notas[0][2]);
+                    musica.notas.RemoveAt(0);   
+            }            
+        }
+
+    }
+    public void UpdateMusica() {
+
+        if (temporaria) {
+            // Console.WriteLine("temp ligada");
+            if (GameScreen.timer >= 650) {    GameScreen.timer -= 650;
+                temporaria = false;
+            }
+        } else {
+        if(musica.notas[0][0] == -1) {
+            // arquivo acabou
+        } else {
+            // Console.WriteLine(GameScreen.timer);
+            if (GameScreen.timer >= musica.notas[0][0]) {
+                    Nota novaNota = new Nota((int)musica.notas[0][1]);
+                    musica.notas.RemoveAt(0);   
+            }            
+        }}
+
+    }
+}

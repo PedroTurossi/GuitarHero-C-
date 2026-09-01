@@ -63,35 +63,35 @@ class Nota : IGameObject {
         }
 
         // DEBUG VISUAL - COLISÃO 
-        // Vector2 posicaoOtima = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - toleranciaHitOtimo);
+        // Vector2 posicaoOtima = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitOtimo);
         // Linha linhaOtima = new Linha();
         // linhaOtima.SetPosicao(posicaoOtima, Color.White);
         // GameScreen.objetosDoJogo.Add(linhaOtima);
         
-        // Vector2 posicaoOtima2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + toleranciaHitOtimo);
+        // Vector2 posicaoOtima2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitOtimo);
         // Linha linhaOtima2 = new Linha();
         // linhaOtima2.SetPosicao(posicaoOtima2, Color.White);
         // GameScreen.objetosDoJogo.Add(linhaOtima2);
 
         
 
-        // Vector2 posicaoBoa = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - toleranciaHitBom);
+        // Vector2 posicaoBoa = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitBom);
         // Linha linhaBoa = new Linha();
         // linhaBoa.SetPosicao(posicaoBoa, Color.DarkGreen);
         // GameScreen.objetosDoJogo.Add(linhaBoa);
         
-        // Vector2 posicaoBoa2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + toleranciaHitBom);
+        // Vector2 posicaoBoa2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitBom);
         // Linha linhaBoa2 = new Linha();
         // linhaBoa2.SetPosicao(posicaoBoa2, Color.DarkGreen);
         // GameScreen.objetosDoJogo.Add(linhaBoa2);
         
 
-        // Vector2 posicaoRuim = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - toleranciaHitRuim);
+        // Vector2 posicaoRuim = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitRuim);
         // Linha linhaRuim = new Linha();
         // linhaRuim.SetPosicao(posicaoRuim, Color.White);
         // GameScreen.objetosDoJogo.Add(linhaRuim);
 
-        // Vector2 posicaoRuim2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + toleranciaHitRuim);
+        // Vector2 posicaoRuim2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitRuim);
         // Linha linhaRuim2 = new Linha();
         // linhaRuim2.SetPosicao(posicaoRuim2, Color.White);
         // GameScreen.objetosDoJogo.Add(linhaRuim2);
@@ -108,6 +108,7 @@ class Nota : IGameObject {
 
         if (posicaoObjeto.Y > Program.alturaTela + 20f) {
             excluirObjeto = true;
+            Console.WriteLine("--Errou");
         }
     }
 
