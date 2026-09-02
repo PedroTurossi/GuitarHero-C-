@@ -155,4 +155,8 @@ class GameScreen : IScreen {
 
     static void CriarNovaLinha() {}
 
+    public void Unload() {
+        Alvo.Unload();
+        Nota.Unload();
+    }
 }

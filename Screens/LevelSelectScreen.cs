@@ -3,6 +3,10 @@ class LevelSelectScreen() : IScreen {
         throw new NotImplementedException();
     }
 
+    public void Unload() {
+        throw new NotImplementedException();
+    }
+
     public void Update(float deltaTime) {
         
         throw new NotImplementedException();

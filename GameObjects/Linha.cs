@@ -5,6 +5,7 @@ class Linha : IGameObject {
     public bool excluirObjeto { get; set; }
     public Color cor { get; set; } = Color.DarkPurple;
     public Vector2 posicaoObjeto { get; set; }
+    public static Texture2D textura { get; set; }
 
     public Vector2[] pontosDaLinha = new Vector2[2];
     
@@ -19,6 +20,9 @@ class Linha : IGameObject {
     }
 
     public void Update(float dt) {
+    }
+
+    public void Load() {
     }
 
 }

@@ -1,8 +1,8 @@
 class ScreenManager {
     private IScreen telaAtual;
 
-    public ScreenManager(IScreen telaInicial) {
-        telaAtual = telaInicial;
+    public ScreenManager() {
+        // telaAtual --> Tela inicial, quando houver um Menu
     }
 
     public void ChangeScreen(IScreen novaTela) {
@@ -15,5 +15,9 @@ class ScreenManager {
 
     public void Draw() {
         telaAtual.Draw();
+    }
+
+    public void UnloadTextures() {
+        telaAtual.Unload();
     }
 }

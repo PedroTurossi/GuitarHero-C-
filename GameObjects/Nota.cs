@@ -4,6 +4,7 @@ using System.Numerics;
 class Nota : IGameObject {
     public bool excluirObjeto { get; set; } = false;
     public Color cor { get; set; }
+    public static Texture2D textura { get; set; }
     public Vector2 posicaoObjeto { get; set; } = Vector2.Zero;
 
     public static float velocidadeDeMovimento = 200f;
@@ -98,7 +99,14 @@ class Nota : IGameObject {
 
     }
 
-    // ajustar posicao do alvo
+    public void Load() {
+        textura = Raylib.LoadTexture("Files\\NotaBase.png");
+    }
+
+    public static void Unload() {
+        Raylib.UnloadTexture(textura);
+    }
+
     public void Update(float dt) {
         Vector2 direcao = new Vector2(0,1);
         Vector2 movimento = direcao * velocidadeDeMovimento * dt;
@@ -113,8 +121,16 @@ class Nota : IGameObject {
     }
 
     public void Draw() {
+        // Console.WriteLine(textura.Id);
+        if (textura.Id == 0) {
+            Load();
+        }
+
+        Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
+        Raylib.DrawTextureV(textura, vetorDaTextura, Color.White);
+
         // fazer alguma animação bacana depois
-        Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 10f, Color.RayWhite);
+        // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 10f, Color.RayWhite);
         // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 1f, Color.Red);
     }
 }

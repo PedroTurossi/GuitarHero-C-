@@ -11,7 +11,7 @@ class Alvo : IGameObject {
     public Color cor { get; set; }
     int idDeCor;
     public Vector2 posicaoObjeto { get; set; }
-    Texture2D texturaNota;
+    public static Texture2D textura { get; set; }
 
 
     float raioAlvo = 14f;
@@ -48,6 +48,15 @@ class Alvo : IGameObject {
         // Raylib.ImageColorReplace(ref imagem, Color.White, cor);
         // texturaNota = Raylib.LoadTextureFromImage(imagem);
         // Raylib.UnloadImage(imagem);
+    }
+
+   
+    public void Load() {
+        textura = Raylib.LoadTexture("Files\\AlvoBase.png");
+    }
+
+    public static void Unload() {
+        Raylib.UnloadTexture(textura);
     }
 
     public void Update(float dt) {
@@ -105,7 +114,14 @@ class Alvo : IGameObject {
     public void Draw() {
         // Raylib.DrawTexture(texturaNota, (int)posicaoObjeto.X, (int)posicaoObjeto.Y, Color.White);
         // Raylib.UnloadTexture(texturaNota);
-        Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, raioAlvo, cor);
+        // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, raioAlvo, cor);
+
+        if (textura.Id == 0) {
+            Load();
+        }
+
+        Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
+        Raylib.DrawTextureV(textura, vetorDaTextura, cor);
     }
 
 }

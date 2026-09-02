@@ -9,10 +9,6 @@ class Program {
     public const int alturaTela = 400;
 
     static void Main() {
-        // CONFIG DE TELAS - Alterar aqui a tela inicial para Debug
-        IScreen telaInicial = new GameScreen();
-        ScreenManager screenManager = new ScreenManager(telaInicial);
-
         // CONFIG
 
             // fazer um "nível" onde as notas vem do meio, do centro da tela
@@ -25,12 +21,16 @@ class Program {
 
 
             Raylib.InitWindow(larguraTela, alturaTela, "Jogasso");
-            Raylib.SetTargetFPS(120);
+            Raylib.SetTargetFPS(120);        
 
             Raylib.InitAudioDevice();
-            Music musicaBraba = Raylib.LoadMusicStream("Files/RapDoMinecraft.mp3");
-            Raylib.PlayMusicStream(musicaBraba);
+            // Music musicaBraba = Raylib.LoadMusicStream("Files/RapDoMinecraft.mp3");
+            // Raylib.PlayMusicStream(musicaBraba);
 
+
+        // CONFIG DE TELAS - Alterar aqui a tela inicial para Debug
+        ScreenManager screenManager = new ScreenManager();
+        screenManager.ChangeScreen(new GameScreen());
 
         while(!Raylib.WindowShouldClose()) {
             
@@ -38,14 +38,17 @@ class Program {
             float deltaTime = Raylib.GetFrameTime();
             screenManager.Update(deltaTime);
             
-            Raylib.UpdateMusicStream(musicaBraba);
+            // Raylib.UpdateMusicStream(musicaBraba);
 
             // --=< DRAW >=--
             Raylib.BeginDrawing();
             screenManager.Draw();
             Raylib.EndDrawing();
         }
-        Raylib.UnloadMusicStream(musicaBraba);
+        // fazer alguma coisa pra descarregar as texturas
+        screenManager.UnloadTextures();
+
+        // Raylib.UnloadMusicStream(musicaBraba);
         Raylib.CloseAudioDevice();
         Raylib.CloseWindow();            
     }
