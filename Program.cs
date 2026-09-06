@@ -7,6 +7,7 @@ class Program {
     // static List<List<float>> notas;
     public const int larguraTela = 800;
     public const int alturaTela = 400;
+    public static Vector2 posicaoDoMouse;
 
     static void Main() {
         // CONFIG
@@ -23,32 +24,31 @@ class Program {
             Raylib.InitWindow(larguraTela, alturaTela, "Jogasso");
             Raylib.SetTargetFPS(120);        
 
-            Raylib.InitAudioDevice();
-            // Music musicaBraba = Raylib.LoadMusicStream("Files/RapDoMinecraft.mp3");
-            // Raylib.PlayMusicStream(musicaBraba);
+            AudioManager.InicializarAudioManager();
 
 
         // CONFIG DE TELAS - Alterar aqui a tela inicial para Debug
-        ScreenManager screenManager = new ScreenManager();
-        screenManager.ChangeScreen(new GameScreen());
+        ScreenManager.ChangeScreen(new LevelSelectScreen());
 
         while(!Raylib.WindowShouldClose()) {
             
             // ***  UPDATE  ***
             float deltaTime = Raylib.GetFrameTime();
-            screenManager.Update(deltaTime);
+            posicaoDoMouse = Raylib.GetMousePosition(); // <-- depois posso colocar em outro lugar, mas é para não precisar puxar ele em várias instâncias
+            ScreenManager.Update(deltaTime);
+
             
-            // Raylib.UpdateMusicStream(musicaBraba);
+            AudioManager.UpdateMusica();
 
             // --=< DRAW >=--
             Raylib.BeginDrawing();
-            screenManager.Draw();
+            ScreenManager.Draw();
             Raylib.EndDrawing();
         }
         // fazer alguma coisa pra descarregar as texturas
-        screenManager.UnloadTextures();
+        ScreenManager.UnloadTextures();
+        AudioManager.UpdateMusica();
 
-        // Raylib.UnloadMusicStream(musicaBraba);
         Raylib.CloseAudioDevice();
         Raylib.CloseWindow();            
     }

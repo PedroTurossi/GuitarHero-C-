@@ -35,6 +35,8 @@ class GameScreen : IScreen {
 
         leitorDeMusica = new LeitorDeMusicas("Files/RapDoMinecraft.json");
 
+        AudioManager.DefinirMusica("Files\\RapDoMinecraft.mp3");
+
 
         // listaDeNotasDoJogo.Add(listaNotasVerdes);
         // listaDeNotasDoJogo.Add(listaNotasVermelhas);

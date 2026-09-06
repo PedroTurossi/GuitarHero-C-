@@ -1,24 +1,32 @@
+using System.Numerics;
 using Raylib_cs;
 
 class TestScreen : IScreen {
 
-    static Texture2D textura;
-    public TestScreen() {
-        
-        textura = Raylib.LoadTexture("Files\\NotaBase.png");
-        Console.WriteLine("#### carregando boceta - " + textura.Id);
+    // static Texture2D textura;
+
+    Rectangle playButton = new Rectangle(300, 220, 200, 50);
+    Rectangle exitButton = new Rectangle(300, 300, 200, 50);
+
+    public TestScreen() {        
+        // textura = Raylib.LoadTexture("Files\\NotaBase.png");
+        // Console.WriteLine("#### carregando textura - " + textura.Id);
     }
 
     public void Draw() {
-        Raylib.ClearBackground(Color.Gray);
-        Raylib.DrawTexture(textura, 100, 50, Color.Red);
+        Raylib.DrawText("Jogasso XD", 310, 100, 40, Color.DarkGray);
+
+        bool hoverPlay = Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton);
+        Raylib.DrawRectangleRec(playButton, hoverPlay ? Color.LightGray : Color.Gray);
+        Raylib.DrawText("JOGAR", (int)playButton.X + 60, (int)playButton.Y + 15, 20, Color.White);
     }
 
     public void Unload() {
-        throw new NotImplementedException();
     }
 
     public void Update(float deltaTime) {
-        
+        if (Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton) && Raylib.IsMouseButtonPressed(MouseButton.Left)) {
+            ScreenManager.ChangeScreen(new GameScreen());
+        }
     }
 }

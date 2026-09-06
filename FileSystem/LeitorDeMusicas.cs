@@ -13,6 +13,7 @@ public class Musica {
 
 class LeitorDeMusicas {
     public bool temporaria = true;
+    static float tempoExtraDeDescida;
 
     public static Musica musica;
     public LeitorDeMusicas(String caminhoDoArquivo) {
@@ -20,6 +21,9 @@ class LeitorDeMusicas {
         Musica arq = JsonSerializer.Deserialize<Musica>(jsonString);
         arq.notas.Add([-1f, 0f, 0f]);
         musica = arq;
+        // depois o arquivo vai ter que sobreescrever a velocidadeDeMovimento de Nota ...
+
+        tempoExtraDeDescida = (Program.alturaTela)/(Nota.velocidadeDeMovimento);
     }
 
     public static void UpdateLoopMusica() {
@@ -39,22 +43,15 @@ class LeitorDeMusicas {
 
     }
     public void UpdateMusica() {
-
-        if (temporaria) {
-            // Console.WriteLine("temp ligada");
-            if (GameScreen.timer >= 650) {    GameScreen.timer -= 650;
-                temporaria = false;
-            }
-        } else {
-        if(musica.notas[0][0] == -1) {
-            // arquivo acabou
-        } else {
+        if(musica.notas.Count > 0 && musica.notas[0][0] != -1){
             // Console.WriteLine(GameScreen.timer);
-            if (GameScreen.timer >= musica.notas[0][0]) {
+            if (GameScreen.timer >= musica.notas[0][0] - tempoExtraDeDescida) {
                     Nota novaNota = new Nota((int)musica.notas[0][1]);
                     musica.notas.RemoveAt(0);   
             }            
-        }}
+        } else {
+            // jogo acabou
+        }
 
     }
 }
