@@ -13,8 +13,31 @@ class LevelSelectScreen : IScreen {
         // de acordo com os diferentes arquivos
 
 
-        listaDeObjetos.Add(new Retangulo(new Vector2(20, 20), 50, 200, Color.Gray, "teste1"));
-        listaDeObjetos.Add(new Retangulo(new Vector2(250, 20), 50, 180, Color.White, "teste2"));
+        string[] arquivos = LeitorDeArquivos.LerDiretorio(Program.localDosArquivos);
+
+        float larguraBotao = Program.larguraTela * 0.4f;
+        float alturaBotao = Program.alturaTela * 0.08f;
+
+        float posicaoX = (Program.larguraTela - larguraBotao) / 2f;
+        float espacamento = Program.alturaTela * 0.02f;
+        
+        for (int i = 0; i < arquivos.Length; i++) {
+            float posicaoY = (Program.alturaTela * 0.05f) + (i * (alturaBotao + espacamento));
+            
+            string arquivoAtual = arquivos[i];
+            string textoDoBotao = Path.GetFileNameWithoutExtension(arquivoAtual);
+
+            listaDeObjetos.Add(
+                new Botao(
+                    new Vector2(posicaoX, posicaoY),
+                    (int)alturaBotao,
+                    (int)larguraBotao,
+                    Color.Gray,
+                    textoDoBotao,
+                    () => ScreenManager.ChangeScreen(new GameScreen(arquivoAtual))
+                )
+            );
+        }
 
     }
     

@@ -26,7 +26,7 @@ class TestScreen : IScreen {
 
     public void Update(float deltaTime) {
         if (Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton) && Raylib.IsMouseButtonPressed(MouseButton.Left)) {
-            ScreenManager.ChangeScreen(new GameScreen());
+            ScreenManager.ChangeScreen(new GameScreen(""));
         }
     }
 }

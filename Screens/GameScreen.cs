@@ -17,7 +17,7 @@ class GameScreen : IScreen {
     static LeitorDeMusicas leitorDeMusica;
 
 
-    public GameScreen () {
+    public GameScreen (string levelASerJogado) {
         Alvo alvoVerde = new Alvo(0); 
         objetosDoJogo.Add(alvoVerde);
         
@@ -33,7 +33,7 @@ class GameScreen : IScreen {
         Alvo alvoLaranja = new Alvo(4); 
         objetosDoJogo.Add(alvoLaranja);
 
-        leitorDeMusica = new LeitorDeMusicas("Files/RapDoMinecraft.json");
+        leitorDeMusica = new LeitorDeMusicas(levelASerJogado);
 
         AudioManager.DefinirMusica("Files\\RapDoMinecraft.mp3");
 
