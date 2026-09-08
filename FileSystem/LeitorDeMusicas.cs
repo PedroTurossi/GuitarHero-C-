@@ -5,7 +5,8 @@ using System.Text.Json;
 
 
 public class Musica {
-    public String nomeMusica {get; set;}
+    public string nomeMusica {get; set;}
+    public string nomeDoArquivoDaMusica {get; set;}
     public List<List<float>> notas {get; set;} = new();
 }
 
@@ -23,7 +24,7 @@ class LeitorDeMusicas {
         musica = arq;
         // depois o arquivo vai ter que sobreescrever a velocidadeDeMovimento de Nota ...
 
-        tempoExtraDeDescida = (Program.alturaTela)/(Nota.velocidadeDeMovimento);
+        tempoExtraDeDescida = ((Program.alturaTela)/(Nota.velocidadeDeMovimento)*1000);
     }
 
     public static void UpdateLoopMusica() {
@@ -45,6 +46,7 @@ class LeitorDeMusicas {
     public void UpdateMusica() {
         if(musica.notas.Count > 0 && musica.notas[0][0] != -1){
             // Console.WriteLine(GameScreen.timer);
+            // Console.WriteLine(GameScreen.timer + " - " + (GameScreen.timer >= musica.notas[0][0] - tempoExtraDeDescida));
             if (GameScreen.timer >= musica.notas[0][0] - tempoExtraDeDescida) {
                     Nota novaNota = new Nota((int)musica.notas[0][1]);
                     musica.notas.RemoveAt(0);   
@@ -53,5 +55,9 @@ class LeitorDeMusicas {
             // jogo acabou
         }
 
+    }
+
+    public string ObterNomeDoArquivoDaMusica() {
+        return musica.nomeDoArquivoDaMusica;
     }
 }

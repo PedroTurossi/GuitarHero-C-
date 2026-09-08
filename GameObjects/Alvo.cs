@@ -13,6 +13,8 @@ class Alvo : IGameObject {
     public Vector2 posicaoObjeto { get; set; }
     public static Texture2D textura { get; set; }
 
+    bool alvoPressionado;
+
 
     float raioAlvo = 14f;
 
@@ -92,7 +94,8 @@ class Alvo : IGameObject {
         }
         // Console.WriteLine(idDeCor);
 
-        if(Raylib.IsKeyDown(teclaDoAlvo)) {
+        alvoPressionado = Raylib.IsKeyDown(teclaDoAlvo);
+        if(alvoPressionado) {
             foreach(IGameObject nota in listaDeNotas) {
                 if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
                     if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
@@ -120,7 +123,13 @@ class Alvo : IGameObject {
             Load();
         }
 
+        // animação quando o alvo é pressionado
+        if (alvoPressionado) {
+            Raylib.DrawEllipseV(posicaoObjeto, (textura.Width-5)/2, (textura.Height-5)/2, cor);
+        }
+
         Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
+        // Raylib.DrawPixelV(vetorDaTextura, Color.Red);
         Raylib.DrawTextureV(textura, vetorDaTextura, cor);
     }
 

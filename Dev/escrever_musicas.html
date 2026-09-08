@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gravador de Charts para JSON</title>
+</head>
+<body>
+    <!--
+    Esse arquivo é apenas uma gambiarra pra escrever jsons de uma maneira mais fácil
+    para usar no programa. Isso aqui é um arquivo que só tem utilidade para 
+    e durante o desenvolvimento.
+     -->
+    <h1>Gravador de Notas (Guitar Hero)</h1>
+    <input type="file" id="audioFile" accept="audio/*"><br><br>
+    <audio id="player" controls></audio><br><br>
+    <p>Aperte: <b>A</b> (Verde), <b>S</b> (Vermelho), <b>D</b> (Amarelo), <b>F</b> (Azul), <b>G</b> (Laranja)</p>
+    <button id="exportBtn">Exportar JSON</button>
+
+    <script>
+        const player = document.getElementById('player');
+        const audioFile = document.getElementById('audioFile');
+        const exportBtn = document.getElementById('exportBtn');
+        
+        let chart = { nomeDaMusica: "Minha Musica", notes: [] };
+        const keyMap = { 'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4 };
+
+        audioFile.addEventListener('change', (e) => {
+            player.src = URL.createObjectURL(e.target.files[0]);
+            chart.nomeDaMusica = e.target.files[0].name.split('.')[0];
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (player.paused || keyMap[e.key.toLowerCase()] === undefined) return;
+            
+            // Pega o tempo atual do player e converte para milissegundos inteiros
+            let currentMs = Math.round(player.currentTime * 1000);
+            
+            chart.notes.push([currentMs, keyMap[e.key.toLowerCase()], 0]);
+            console.log(`Nota registrada: ${currentMs}ms na lane ${keyMap[e.key.toLowerCase()]}`);
+        });
+
+        exportBtn.addEventListener('click', () => {
+            // Ordena as notas por tempo antes de exportar
+            chart.notes.sort((a, b) => a.ms - b.ms);
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chart, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `${chart.nomeDaMusica}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        });
+    </script>
+</body>
+</html>
