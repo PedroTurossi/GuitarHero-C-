@@ -18,6 +18,8 @@ class GameScreen : IScreen {
 
 
     public GameScreen (string levelASerJogado) {
+        ParticleManager.CarregarTexturas();
+
         Alvo alvoVerde = new Alvo(0); 
         objetosDoJogo.Add(alvoVerde);
         
@@ -76,6 +78,11 @@ class GameScreen : IScreen {
         //     }
         // }    
 
+        foreach (IGameObject particula in ParticleManager.listaDeParticulas) {
+            particula.Update(deltaTime);
+        }
+
+
         foreach (IGameObject objeto in listaNotasVerdes) {
             objeto.Update(deltaTime);
         }
@@ -114,6 +121,12 @@ class GameScreen : IScreen {
         //     }
         //     listaNotas.RemoveAll(notas => notas.excluirObjeto);
         // }        
+
+        foreach (IGameObject particula in ParticleManager.listaDeParticulas) {
+            particula.Draw();
+        }
+        ParticleManager.listaDeParticulas.RemoveAll(objeto => objeto.excluirObjeto);
+
 
         foreach (IGameObject objeto in listaNotasVerdes) {
             objeto.Draw();
@@ -162,5 +175,6 @@ class GameScreen : IScreen {
     public void Unload() {
         Alvo.Unload();
         Nota.Unload();
+        ParticleManager.DescarregarTexturas();
     }
 }

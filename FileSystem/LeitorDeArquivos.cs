@@ -23,6 +23,11 @@ class LeitorDeArquivos {
         string[] arquivos = Directory.GetFiles(diretorio, "*.json");
         return arquivos;
     }
+
+    public static string[] LerImagensDoDiretorio(string diretorio) {
+        string[] arquivos = Directory.GetFiles(diretorio, "*.png");
+        return arquivos;
+    }
 }
 
 // public class LeitorDeConfigs {

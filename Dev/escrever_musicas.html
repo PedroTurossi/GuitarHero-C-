@@ -20,14 +20,28 @@
         const player = document.getElementById('player');
         const audioFile = document.getElementById('audioFile');
         const exportBtn = document.getElementById('exportBtn');
-        
-        let chart = { nomeDaMusica: "Minha Musica", notes: [] };
+
+        // Inicializa o objeto chart
+        let chart = { nomeDaMusica: "Minha Musica", "nomeDoArquivoDaMusica": "", notas: [] };
         const keyMap = { 'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4 };
 
         audioFile.addEventListener('change', (e) => {
-            player.src = URL.createObjectURL(e.target.files[0]);
-            chart.nomeDaMusica = e.target.files[0].name.split('.')[0];
+            const arquivo = e.target.files[0];
+
+            if (arquivo) {
+                // Alimenta o player de áudio para tocar a música
+                player.src = URL.createObjectURL(arquivo);
+                
+                // Salva o nome completo do arquivo (ex: "musica.mp3")
+                chart.nomeDoArquivoDaMusica = arquivo.name;
+                
+                // Salva apenas o nome da música sem a extensão (ex: "musica")
+                chart.nomeDaMusica = arquivo.name.split('.')[0];
+                
+                console.log("Chart atualizado:", chart);
+            }
         });
+
 
         window.addEventListener('keydown', (e) => {
             if (player.paused || keyMap[e.key.toLowerCase()] === undefined) return;
@@ -35,13 +49,13 @@
             // Pega o tempo atual do player e converte para milissegundos inteiros
             let currentMs = Math.round(player.currentTime * 1000);
             
-            chart.notes.push([currentMs, keyMap[e.key.toLowerCase()], 0]);
+            chart.notas.push([currentMs, keyMap[e.key.toLowerCase()], 0]);
             console.log(`Nota registrada: ${currentMs}ms na lane ${keyMap[e.key.toLowerCase()]}`);
         });
 
         exportBtn.addEventListener('click', () => {
             // Ordena as notas por tempo antes de exportar
-            chart.notes.sort((a, b) => a.ms - b.ms);
+            chart.notas.sort((a, b) => a.ms - b.ms);
             
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chart, null, 2));
             const downloadAnchor = document.createElement('a');

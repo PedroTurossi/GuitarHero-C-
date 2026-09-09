@@ -5,7 +5,7 @@ class Alvo : IGameObject {
     
     public static float toleranciaHitRuim = 23f;
     public static float toleranciaHitBom = 12f;
-    public static float toleranciaHitOtimo = 6f;
+    public static float toleranciaHitOtimo = 10f;
     
     public bool excluirObjeto { get; set; } = false;
     public Color cor { get; set; }
@@ -100,7 +100,8 @@ class Alvo : IGameObject {
                 if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
                     if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
                         if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
-                            Console.WriteLine("++Foda");
+                            Console.WriteLine("++Ótimo");
+                            ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
                         } else{
                             Console.WriteLine("+bom");
                         }
