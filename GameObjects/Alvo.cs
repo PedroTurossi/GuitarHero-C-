@@ -111,7 +111,7 @@ class Alvo : IGameObject {
                             textoASerEscrito = "+Bom";
                         }
                     } else {
-                        corDoTexto = Color.Gray;
+                        corDoTexto = Color.LightGray;
                         textoASerEscrito = "-ruim";
                     }
                     WordsManager.AdicionarPalavra(posicaoPalavraNotaV, 16, textoASerEscrito, corDoTexto, textoTemporario:true);

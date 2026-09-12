@@ -114,9 +114,11 @@ class Nota : IGameObject {
         timer += dt;
         
 
-        if (posicaoObjeto.Y > Program.alturaTela + 20f) {
+        if (posicaoObjeto.Y > Program.alturaTela + GameScreen.offsetY) {
             excluirObjeto = true;
-            Console.WriteLine("--Errou");
+            string texto1 = "--errou";
+            Vector2 vetorDaPalavraErro = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
+            WordsManager.AdicionarPalavra(vetorDaPalavraErro, 14, texto1, Color.Gray, true);
         }
     }
 
