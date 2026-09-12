@@ -14,11 +14,15 @@ class TestScreen : IScreen {
     }
 
     public void Draw() {
+        Raylib.ClearBackground(Color.Black);
         Raylib.DrawText("Jogasso XD", 310, 100, 40, Color.DarkGray);
 
         bool hoverPlay = Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton);
         Raylib.DrawRectangleRec(playButton, hoverPlay ? Color.LightGray : Color.Gray);
         Raylib.DrawText("JOGAR", (int)playButton.X + 60, (int)playButton.Y + 15, 20, Color.White);
+
+        WordsManager.DesenharPalavras();
+
     }
 
     public void Unload() {
@@ -26,7 +30,8 @@ class TestScreen : IScreen {
 
     public void Update(float deltaTime) {
         if (Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton) && Raylib.IsMouseButtonPressed(MouseButton.Left)) {
-            ScreenManager.ChangeScreen(new GameScreen(""));
+            WordsManager.AdicionarPalavra(Program.posicaoDoMouse, 20, "xd");
         }
+        WordsManager.UpdatePalavras(deltaTime);
     }
 }

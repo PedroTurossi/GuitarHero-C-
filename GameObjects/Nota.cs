@@ -7,7 +7,7 @@ class Nota : IGameObject {
     public static Texture2D textura { get; set; }
     public Vector2 posicaoObjeto { get; set; } = Vector2.Zero;
 
-    public static float velocidadeDeMovimento = 400f;
+    public static float velocidadeDeMovimento = 500f;
     // static float toleranciaDeColisao = velocidadeDeMovimento/120;
     // static float toleranciaHitRuim = velocidadeDeMovimento/22;
     // static float toleranciaHitBom = velocidadeDeMovimento/45;

@@ -98,16 +98,23 @@ class Alvo : IGameObject {
         if(alvoPressionado) {
             foreach(IGameObject nota in listaDeNotas) {
                 if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
+                    string textoASerEscrito;
+                    Vector2 posicaoPalavraNotaV = new Vector2(posicaoObjeto.X, posicaoObjeto.Y + GameScreen.offsetY / 2);
+                    Color corDoTexto;
                     if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
+                        ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
+                        corDoTexto = Color.White;
                         if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
-                            Console.WriteLine("++Ótimo");
+                            textoASerEscrito = "++Ótimo";
                             ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
                         } else{
-                            Console.WriteLine("+bom");
+                            textoASerEscrito = "+Bom";
                         }
                     } else {
-                        Console.WriteLine("-ruim");
+                        corDoTexto = Color.Gray;
+                        textoASerEscrito = "-ruim";
                     }
+                    WordsManager.AdicionarPalavra(posicaoPalavraNotaV, 16, textoASerEscrito, corDoTexto, textoTemporario:true);
                     nota.excluirObjeto = true;
                 } else {
                 }

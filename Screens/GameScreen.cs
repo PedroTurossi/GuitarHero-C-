@@ -12,7 +12,7 @@ class GameScreen : IScreen {
     public static List<IGameObject> listaNotasLaranjas = new();
 
     public static float timer = 0f;
-    public static int offsetY = 40;
+    public static int offsetY = 50;
     public static int offsetX = 120;
     static LeitorDeMusicas leitorDeMusica;
 
@@ -78,10 +78,8 @@ class GameScreen : IScreen {
         //     }
         // }    
 
-        foreach (IGameObject particula in ParticleManager.listaDeParticulas) {
-            particula.Update(deltaTime);
-        }
-
+        ParticleManager.UpdateParticles(deltaTime);
+        WordsManager.UpdatePalavras(deltaTime);
 
         foreach (IGameObject objeto in listaNotasVerdes) {
             objeto.Update(deltaTime);
@@ -122,10 +120,8 @@ class GameScreen : IScreen {
         //     listaNotas.RemoveAll(notas => notas.excluirObjeto);
         // }        
 
-        foreach (IGameObject particula in ParticleManager.listaDeParticulas) {
-            particula.Draw();
-        }
-        ParticleManager.listaDeParticulas.RemoveAll(objeto => objeto.excluirObjeto);
+        ParticleManager.DrawParticles();
+        WordsManager.DesenharPalavras();
 
 
         foreach (IGameObject objeto in listaNotasVerdes) {
