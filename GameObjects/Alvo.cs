@@ -4,7 +4,7 @@ using Raylib_cs;
 class Alvo : IGameObject {
     
     public static float toleranciaHitRuim = 23f;
-    public static float toleranciaHitBom = 12f;
+    public static float toleranciaHitBom = 18f;
     public static float toleranciaHitOtimo = 10f;
     
     public bool excluirObjeto { get; set; } = false;
@@ -99,22 +99,18 @@ class Alvo : IGameObject {
             foreach(IGameObject nota in listaDeNotas) {
                 if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
                     string textoASerEscrito;
-                    Vector2 posicaoPalavraNotaV = new Vector2(posicaoObjeto.X, posicaoObjeto.Y + GameScreen.offsetY / 2);
-                    Color corDoTexto;
                     if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
                         ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
-                        corDoTexto = Color.White;
                         if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
-                            textoASerEscrito = "++Ótimo";
+                            textoASerEscrito = "Great";
                             ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
                         } else{
-                            textoASerEscrito = "+Bom";
+                            textoASerEscrito = "Good";
                         }
                     } else {
-                        corDoTexto = Color.LightGray;
-                        textoASerEscrito = "-ruim";
+                        textoASerEscrito = "Bad";
                     }
-                    WordsManager.AdicionarPalavra(posicaoPalavraNotaV, 16, textoASerEscrito, corDoTexto, textoTemporario:true);
+                    RegistrarPontuacaoProGameManager(textoASerEscrito);
                     nota.excluirObjeto = true;
                 } else {
                 }
@@ -139,6 +135,11 @@ class Alvo : IGameObject {
         Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
         // Raylib.DrawPixelV(vetorDaTextura, Color.Red);
         Raylib.DrawTextureV(textura, vetorDaTextura, cor);
+    }
+
+    public void RegistrarPontuacaoProGameManager(string pontuacao) {
+        Vector2 posicaoPalavraNotaV = new Vector2(posicaoObjeto.X, posicaoObjeto.Y + GameScreen.offsetY / 2);
+        GameManager.RegistrarPontuacao(pontuacao, posicaoPalavraNotaV);
     }
 
 }

@@ -8,10 +8,6 @@ class Nota : IGameObject {
     public Vector2 posicaoObjeto { get; set; } = Vector2.Zero;
 
     public static float velocidadeDeMovimento = 500f;
-    // static float toleranciaDeColisao = velocidadeDeMovimento/120;
-    // static float toleranciaHitRuim = velocidadeDeMovimento/22;
-    // static float toleranciaHitBom = velocidadeDeMovimento/45;
-    // static float toleranciaHitOtimo = velocidadeDeMovimento/105;
 
     Vector2 posicaoDoAlvo = Vector2.Zero;
 
@@ -116,9 +112,11 @@ class Nota : IGameObject {
 
         if (posicaoObjeto.Y > Program.alturaTela + GameScreen.offsetY) {
             excluirObjeto = true;
-            string texto1 = "--errou";
-            Vector2 vetorDaPalavraErro = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
-            WordsManager.AdicionarPalavra(vetorDaPalavraErro, 14, texto1, Color.Gray, true);
+            
+            string texto1 = "Miss";
+            // Vector2 vetorDaPalavraErro = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
+            // WordsManager.AdicionarPalavra(vetorDaPalavraErro, 14, texto1, Color.Gray, true);
+            RegistrarPontuacaoProGameManager(texto1);
         }
     }
 
@@ -134,6 +132,11 @@ class Nota : IGameObject {
         // fazer alguma animação bacana depois
         // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 10f, Color.RayWhite);
         // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 1f, Color.Red);
+    }
+
+    public void RegistrarPontuacaoProGameManager(string pontuacao) {
+        Vector2 vetorParaEscrita = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
+        GameManager.RegistrarPontuacao(pontuacao, vetorParaEscrita);
     }
 }
 

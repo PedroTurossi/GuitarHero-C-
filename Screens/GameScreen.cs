@@ -12,13 +12,15 @@ class GameScreen : IScreen {
     public static List<IGameObject> listaNotasLaranjas = new();
 
     public static float timer = 0f;
-    public static int offsetY = 50;
+    public static int offsetY = 80;
     public static int offsetX = 120;
     static LeitorDeMusicas leitorDeMusica;
 
 
     public GameScreen (string levelASerJogado) {
         ParticleManager.CarregarTexturas();
+
+        GameManager.IniciarJogo();
 
         Alvo alvoVerde = new Alvo(0); 
         objetosDoJogo.Add(alvoVerde);
