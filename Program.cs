@@ -24,6 +24,7 @@ class Program {
 
             Raylib.InitWindow(larguraTela, alturaTela, "Jogasso");
             Raylib.SetTargetFPS(120);        
+            Raylib.SetExitKey(KeyboardKey.Null); 
 
             AudioManager.InicializarAudioManager();
 
@@ -38,8 +39,6 @@ class Program {
             posicaoDoMouse = Raylib.GetMousePosition(); // <-- depois posso colocar em outro lugar, mas é para não precisar puxar ele em várias instâncias
             ScreenManager.Update(deltaTime);
 
-            
-            AudioManager.UpdateMusica();
 
             // --=< DRAW >=--
             Raylib.BeginDrawing();
@@ -48,7 +47,6 @@ class Program {
         }
         // fazer alguma coisa pra descarregar as texturas
         ScreenManager.UnloadTextures();
-        AudioManager.UpdateMusica();
 
         Raylib.CloseAudioDevice();
         Raylib.CloseWindow();            

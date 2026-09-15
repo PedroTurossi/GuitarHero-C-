@@ -16,6 +16,14 @@ class AudioManager {
         Raylib.UpdateMusicStream(musicaASerTocada);
     }
 
+    public static void PausarMusica() {
+        Raylib.PauseMusicStream(musicaASerTocada);
+    }
+
+    public static void DespausarMusica() {
+        Raylib.ResumeMusicStream(musicaASerTocada);
+    }
+
     public static void UnloadMusica() {
         Raylib.UnloadMusicStream(musicaASerTocada);
     }

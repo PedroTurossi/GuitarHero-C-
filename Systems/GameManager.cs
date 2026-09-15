@@ -1,7 +1,16 @@
 using System.Numerics;
 using Raylib_cs;
 
+
+enum GameState {
+    Jogando,
+    Pausado,
+    Finalizado
+}
+
+
 class GameManager {
+    public static GameState gameState = GameState.Jogando;
 
     private static int scoreBoard = 0;
 
