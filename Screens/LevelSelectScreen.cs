@@ -41,14 +41,16 @@ class LevelSelectScreen : IScreen {
 
     }
     
-    public void Update(float deltaTime) {
+    public void Update(float deltaTime, GameContext context) {
         foreach(IGameObject objeto in listaDeObjetos) {
             objeto.Update(deltaTime);
         }
     }
 
 
-    public void Draw() {
+    public void Draw(GameContext context) {
+        Raylib.ClearBackground(Color.DarkGray);
+
         foreach(IGameObject objeto in listaDeObjetos) {
             objeto.Draw();
         }

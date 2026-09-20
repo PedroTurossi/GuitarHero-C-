@@ -2,202 +2,140 @@ using System.Numerics;
 using Raylib_cs;
 
 class GameScreen : IScreen {
-    public static List<IGameObject> objetosDoJogo = new();
+    private readonly GameplaySession session;
+    private readonly NoteSpawner noteSpawner;
+    private readonly HitJudge hitJudge = new();
 
-    List<List<IGameObject>> listaDeNotasDoJogo = new();
-    public static List<IGameObject> listaNotasVerdes = new();
-    public static List<IGameObject> listaNotasVermelhas = new();
-    public static List<IGameObject> listaNotasAmarelas = new();
-    public static List<IGameObject> listaNotasAzuis = new();
-    public static List<IGameObject> listaNotasLaranjas = new();
-
-    public static float timer = 0f;
-    public static int offsetY = 80;
-    public static int offsetX = 120;
-    static LeitorDeMusicas leitorDeMusica;
-
-
-    public GameScreen (string levelASerJogado) {
+    public GameScreen(string levelASerJogado) {
         ParticleManager.CarregarTexturas();
 
-        GameManager.IniciarJogo();
+        Song song = new SongLoader().Load(levelASerJogado);
+        session = new GameplaySession(song);
+        noteSpawner = new NoteSpawner(song);
 
-        Alvo alvoVerde = new Alvo(0); 
-        objetosDoJogo.Add(alvoVerde);
-        
-        Alvo alvoVermelho = new Alvo(1); 
-        objetosDoJogo.Add(alvoVermelho);
-        
-        Alvo alvoAmarelo = new Alvo(2); 
-        objetosDoJogo.Add(alvoAmarelo);
-        
-        Alvo alvoAzul = new Alvo(3); 
-        objetosDoJogo.Add(alvoAzul);
-        
-        Alvo alvoLaranja = new Alvo(4); 
-        objetosDoJogo.Add(alvoLaranja);
+        CreateTargets(new GameSettings(Program.larguraTela, Program.alturaTela, Program.localDosArquivos));
 
-        leitorDeMusica = new LeitorDeMusicas(levelASerJogado);
-        string musicaASerJogada =  (Program.localDosArquivos + "/" + leitorDeMusica.ObterNomeDoArquivoDaMusica());
-
-
-        AudioManager.DefinirMusica(musicaASerJogada);
-
-
-        // listaDeNotasDoJogo.Add(listaNotasVerdes);
-        // listaDeNotasDoJogo.Add(listaNotasVermelhas);
-        // listaDeNotasDoJogo.Add(listaNotasAmarelas);
-        // listaDeNotasDoJogo.Add(listaNotasAzuis);
-        // listaDeNotasDoJogo.Add(listaNotasLaranjas);
+        string musicPath = Path.Combine(Program.localDosArquivos, song.AudioFile);
+        AudioManager.DefinirMusica(musicPath);
     }
 
-
-    // ***  UPDATE   ***
-    public void Update(float deltaTime) {
-
-        switch(GameManager.gameState) {
+    public void Update(float deltaTime, GameContext context) {
+        switch (session.State) {
             case GameState.Jogando:
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsKeyPressed(KeyboardKey.Space)) {
-                    CriarNovaBolinha();
-                }
+                UpdatePlaying(deltaTime, context);
+                break;
 
-            // dps ajustar o timer ou o arquivo pra não precisa multiplicar por 1000
-                timer += deltaTime * 1000;
-                AudioManager.UpdateMusica();
-
-                if (Raylib.IsKeyPressed(KeyboardKey.Escape)) {
-                    GameManager.gameState = GameState.Pausado;
-                    AudioManager.PausarMusica();
-                }
-
-                // if (timer >= 0.2f) {
-                //     timer =- 0.2f;
-                //     CriarNovaBolinha();
-                // }
-                //  O que antes era o "LoopArquivo();" agora ta dentro de leitordemusica, e ta acessando o timer...
-
-                leitorDeMusica.UpdateMusica();
-
-                foreach (IGameObject objeto in objetosDoJogo) {
-                    // Console.WriteLine(objeto.GetHashCode());
-                    objeto.Update(deltaTime);
-                }
-
-                // Eu ainda vou achar uma forma mais eficiente de fazer isso, mil desculpas eu do futuro. mas eu AINDA vou fazer
-                // foreach (List<IGameObject> listaNotas in listaDeNotasDoJogo) {
-                //     foreach (IGameObject notas in listaNotas) {
-                //         notas.Update(deltaTime);
-                //     }
-                // }    
-
-                ParticleManager.UpdateParticles(deltaTime);
-                WordsManager.UpdatePalavras(deltaTime);
-
-                foreach (IGameObject objeto in listaNotasVerdes) {
-                    objeto.Update(deltaTime);
-                }
-            
-                foreach (IGameObject objeto in listaNotasVermelhas) {
-                    objeto.Update(deltaTime);
-                }
-            
-                foreach (IGameObject objeto in listaNotasAmarelas) {
-                    objeto.Update(deltaTime);
-                }
-            
-                foreach (IGameObject objeto in listaNotasAzuis) {
-                    objeto.Update(deltaTime);
-                }
-            
-                foreach (IGameObject objeto in listaNotasLaranjas  ) {
-                    objeto.Update(deltaTime);
-                }
-            break;
-            
             case GameState.Pausado:
-                if (Raylib.IsKeyPressed(KeyboardKey.Escape)) {
-                    GameManager.gameState = GameState.Jogando;
+                if (context.Input.PausePressed) {
+                    session.State = GameState.Jogando;
                     AudioManager.DespausarMusica();
                 }
-            break;
-
+                break;
         }
-
-        
-    
     }
 
+    private void UpdatePlaying(float deltaTime, GameContext context) {
+        if (context.Input.DebugSpawnPressed) {
+            int randomLane = Random.Shared.Next(GameSettings.LaneCount);
+            session.AddNote(new Nota(randomLane, context.Settings, session));
+        }
 
-    // --=< DRAW >=-- 
-    public void Draw() {
+        session.AdvanceTime(deltaTime);
+        AudioManager.UpdateMusica();
+
+        if (context.Input.PausePressed) {
+            session.State = GameState.Pausado;
+            AudioManager.PausarMusica();
+            return;
+        }
+
+        session.ResetTargetsInputState();
+        noteSpawner.Update(session, context);
+        hitJudge.Update(session, context);
+
+        // foreach (IGameObject objeto in session.Objects) {
+        //     objeto.Update(deltaTime);
+        // }
+
+        foreach (Alvo target in session.Targets) {
+            target.Update(deltaTime);
+        }
+
+        UpdateNotes(deltaTime, context);
+        ParticleManager.UpdateParticles(deltaTime);
+        WordsManager.UpdatePalavras(deltaTime);
+    }
+
+    private void UpdatePauseMenu(float deltaTime, GameContext context) {
+        
+    }
+
+    private void UpdateNotes(float deltaTime, GameContext context) {
+        foreach (List<Nota> notes in session.NotesByLane) {
+            foreach (Nota note in notes) {
+                note.Update(deltaTime);
+
+                if (note.Missed && !note.MissRegistered) {
+                    hitJudge.RegisterMiss(note, session, context.Settings);
+                    note.MissRegistered = true;
+                }
+            }
+
+            notes.RemoveAll(note => note.excluirObjeto);
+        }
+    }
+
+    public void Draw(GameContext context) {
         Raylib.ClearBackground(Color.DarkGray);
 
-        foreach (IGameObject objeto in objetosDoJogo) {
+        foreach (IGameObject objeto in session.Objects) {
             objeto.Draw();
         }
-        objetosDoJogo.RemoveAll(objeto => objeto.excluirObjeto);
+        session.Objects.RemoveAll(objeto => objeto.excluirObjeto);
 
-        // foreach (List<IGameObject> listaNotas in listaDeNotasDoJogo) {
-        //     foreach (IGameObject notas in listaNotas) {
-        //         notas.Draw();
-        //     }
-        //     listaNotas.RemoveAll(notas => notas.excluirObjeto);
-        // }        
+        foreach (Alvo target in session.Targets) {
+            target.Draw();
+        }
 
         ParticleManager.DrawParticles();
         WordsManager.DesenharPalavras();
 
-
-        foreach (IGameObject objeto in listaNotasVerdes) {
-            objeto.Draw();
+        foreach (List<Nota> notes in session.NotesByLane) {
+            foreach (Nota note in notes) {
+                note.Draw();
+            }
         }
-        listaNotasVerdes.RemoveAll(objeto => objeto.excluirObjeto);
 
-        foreach (IGameObject objeto in listaNotasVermelhas) {
-            objeto.Draw();
-        }
-        listaNotasVermelhas.RemoveAll(objeto => objeto.excluirObjeto);
+        DrawScore();
 
-        foreach (IGameObject objeto in listaNotasAmarelas) {
-            objeto.Draw();
-        }
-        listaNotasAmarelas.RemoveAll(objeto => objeto.excluirObjeto);
-
-        foreach (IGameObject objeto in listaNotasAzuis) {
-            objeto.Draw();
-        }
-        listaNotasAzuis.RemoveAll(objeto => objeto.excluirObjeto);
-
-        foreach (IGameObject objeto in listaNotasLaranjas) {
-            objeto.Draw();
-        }
-        listaNotasLaranjas.RemoveAll(objeto => objeto.excluirObjeto);
-
-        if (GameManager.gameState == GameState.Pausado) {
-            DrawPauseMenu();
+        if (session.State == GameState.Pausado) {
+            DrawPauseMenu(context);
         }
     }
 
-    void DrawPauseMenu() {
-        Color corCinzaTranslucia = Color.Black;
-        corCinzaTranslucia.A = (byte) 80;
-        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(Program.larguraTela, Program.alturaTela), corCinzaTranslucia);
+    private void CreateTargets(GameSettings settings) {
+        for (int lane = 0; lane < GameSettings.LaneCount; lane++) {
+            Vector2 position = session.GetTargetPosition(lane, settings);
+            session.Targets.Add(new Alvo(lane, position, LaneColor.GetColor(lane)));
+        }
     }
 
-
-
-    static void CriarNovaBolinha() {
-        // alterar número dentro de "nota" para colocar de uma trilha específica (Verde(0), Vermelho, Amarelo, Azul e Laranja(4))
-        Nota novaBolinha = new Nota();
-        // objetosDoJogo.Add(novaBolinha);
-        // listaNotasVerdes.Add(novaBolinha);
+    private void DrawScore() {
+        Raylib.DrawText($"Score: {session.Score}", 16, 16, 20, Color.White);
     }
 
-    static void CriarNovaLinha() {}
+    private void DrawPauseMenu(GameContext context) {
+        Color overlay = Color.Black;
+        overlay.A = 80;
+        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth, context.ScreenHeight), overlay);
+        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth/2.5f, context.ScreenHeight), overlay);
+        Raylib.DrawText("PAUSADO", context.ScreenWidth / 5 - 58, context.ScreenHeight / 2 - 12, 24, Color.White);
+    }
 
     public void Unload() {
         Alvo.Unload();
         Nota.Unload();
         ParticleManager.DescarregarTexturas();
+        AudioManager.UnloadMusica();
     }
 }

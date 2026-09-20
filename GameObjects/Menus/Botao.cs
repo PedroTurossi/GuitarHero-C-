@@ -34,7 +34,7 @@ class Botao : IGameObject {
 
     public void Update(float dt) {
         if (Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, retangulo) && Raylib.IsMouseButtonPressed(MouseButton.Left)) {
-            AoClicar.Invoke();
+            AoClicar?.Invoke();
         }
     }
 

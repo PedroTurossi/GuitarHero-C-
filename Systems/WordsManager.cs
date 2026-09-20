@@ -13,7 +13,6 @@ class Palavra : IGameObject {
     float tempoRestanteDePalavraNaTela = 0.8f;
 
     int tamanhoDaFonte;
-    string fonte;
     string texto;
 
     static Random rand = new Random();

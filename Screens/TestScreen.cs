@@ -3,35 +3,54 @@ using Raylib_cs;
 
 class TestScreen : IScreen {
 
-    // static Texture2D textura;
+    // List<IGameObject> listaDeObjetos = new List<IGameObject>();
 
-    Rectangle playButton = new Rectangle(300, 220, 200, 50);
-    Rectangle exitButton = new Rectangle(300, 300, 200, 50);
+    Botao botaoDePlay;
+    Rectangle exitButton;
+    bool teste = false;
 
-    public TestScreen() {        
-        // textura = Raylib.LoadTexture("Files\\NotaBase.png");
-        // Console.WriteLine("#### carregando textura - " + textura.Id);
+    public TestScreen() {   
+        int larguraDoBotao = (int)(Program.larguraTela * 0.08f);
+        int alturaDoBotao = (int)(Program.alturaTela * 0.04f);
+        Vector2 posicaoBotaoDePlay = new Vector2(Program.larguraTela/2.5f - larguraDoBotao/2, Program.alturaTela/2  - 80 - alturaDoBotao);     
+        botaoDePlay = new Botao(
+                posicaoBotaoDePlay,
+                alturaDoBotao,
+                larguraDoBotao,
+                Color.Red,
+                "Jogar", 
+                () => Console.Write("jogar xd"));
+
+        Console.WriteLine("#### carregando botao");
     }
 
-    public void Draw() {
-        Raylib.ClearBackground(Color.Black);
+    public void Draw(GameContext context) {
+        Raylib.ClearBackground(Color.SkyBlue);
         Raylib.DrawText("Jogasso XD", 310, 100, 40, Color.DarkGray);
 
-        bool hoverPlay = Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton);
-        Raylib.DrawRectangleRec(playButton, hoverPlay ? Color.LightGray : Color.Gray);
-        Raylib.DrawText("JOGAR", (int)playButton.X + 60, (int)playButton.Y + 15, 20, Color.White);
 
-        WordsManager.DesenharPalavras();
+        // camada 1 - cinza em toda a tela
+        Color overlay = Color.Black;
+        overlay.A = 80;
+        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth, context.ScreenHeight), overlay);
+
+        // camada 2 - cinza no canto esquerdo
+        Vector2 vetorDoRetanguloEsquerdo = new Vector2(context.ScreenWidth/2.5f, context.ScreenHeight);
+        Raylib.DrawRectangleV(Vector2.Zero, vetorDoRetanguloEsquerdo, overlay);
+        Raylib.DrawText("PAUSADO", context.ScreenWidth / 5 - 58, context.ScreenHeight / 2 - 12, 24, Color.White);
+
+        botaoDePlay.Draw();
 
     }
 
     public void Unload() {
     }
 
-    public void Update(float deltaTime) {
-        if (Raylib.CheckCollisionPointRec(Program.posicaoDoMouse, playButton) && Raylib.IsMouseButtonPressed(MouseButton.Left)) {
-            WordsManager.AdicionarPalavra(Program.posicaoDoMouse, 20, "xd");
-        }
-        WordsManager.UpdatePalavras(deltaTime);
+    public void Update(float deltaTime, GameContext context) {
+        
+        // if (Raylib.CheckCollisionPointRec(context.Input.MousePosition, playButton) && context.Input.MouseLeftPressed) {
+        //     WordsManager.AdicionarPalavra(context.Input.MousePosition, 20, "xd");
+        // }
+        // WordsManager.UpdatePalavras(deltaTime);
     }
 }

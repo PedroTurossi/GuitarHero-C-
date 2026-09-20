@@ -16,6 +16,10 @@ class ParticleManager {
     }
 
     public static void CarregarTexturas() {
+        if (listaDeTexturas.Count > 0) {
+            return;
+        }
+
         string localDasTexturas = Program.localDosArquivos + "Particulas";
         string[] arquivosDeTexturaExistentes = LeitorDeArquivos.LerImagensDoDiretorio(localDasTexturas);
         
@@ -37,6 +41,7 @@ class ParticleManager {
         foreach(Texture2D textura in listaDeTexturas) {
             Raylib.UnloadTexture(textura);
         }
+        listaDeTexturas.Clear();
     }
 
     public static void UpdateParticles(float deltaTime) {

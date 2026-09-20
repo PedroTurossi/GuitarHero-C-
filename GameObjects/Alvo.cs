@@ -2,57 +2,21 @@ using System.Numerics;
 using Raylib_cs;
 
 class Alvo : IGameObject {
-    
-    public static float toleranciaHitRuim = 23f;
-    public static float toleranciaHitBom = 18f;
-    public static float toleranciaHitOtimo = 10f;
-    
     public bool excluirObjeto { get; set; } = false;
     public Color cor { get; set; }
-    int idDeCor;
     public Vector2 posicaoObjeto { get; set; }
     public static Texture2D textura { get; set; }
 
-    bool alvoPressionado;
+    public int Lane { get; }
 
+    private bool alvoPressionado;
 
-    float raioAlvo = 14f;
-
-    public Alvo (int id) {
-        float posicaoX = GameScreen.offsetX + ((id==0) ? 0 : ( ((Program.larguraTela - (GameScreen.offsetX*2)) / (4)) * id ));
-        float posicaoY = Program.alturaTela - GameScreen.offsetY;
-
-        posicaoObjeto = new Vector2((int) posicaoX, (int) posicaoY);
-        idDeCor = id;
-        switch(id) {
-            case 0:
-                cor = Color.Green;
-                break;
-
-            case 1:
-                cor = Color.Red;
-                break;
-
-            case 2:
-                cor = Color.Yellow;
-                break;
-
-            case 3:
-                cor = Color.Blue;
-                break;
-
-            case 4:
-                cor = Color.Orange;
-                break;
-        }
-        // Console.WriteLine("## INICIALIZANDO ALVO - " + id);
-        // Image imagem = Raylib.LoadImage("Files/NotaBase.png");
-        // Raylib.ImageColorReplace(ref imagem, Color.White, cor);
-        // texturaNota = Raylib.LoadTextureFromImage(imagem);
-        // Raylib.UnloadImage(imagem);
+    public Alvo(int lane, Vector2 position, Color color) {
+        Lane = lane;
+        posicaoObjeto = position;
+        cor = color;
     }
 
-   
     public void Load() {
         textura = Raylib.LoadTexture("Files\\AlvoBase.png");
     }
@@ -62,84 +26,26 @@ class Alvo : IGameObject {
     }
 
     public void Update(float dt) {
-        List<IGameObject> listaDeNotas = new List<IGameObject>();
-        KeyboardKey teclaDoAlvo = KeyboardKey.Space;
+    }
 
-        switch(idDeCor) {
-            case 0:
-                listaDeNotas = GameScreen.listaNotasVerdes;
-                teclaDoAlvo = KeyboardKey.A;
-
-                break;
-            
-            case 1:
-                listaDeNotas = GameScreen.listaNotasVermelhas;
-                teclaDoAlvo = KeyboardKey.S;
-                break;
-
-            case 2:
-                listaDeNotas = GameScreen.listaNotasAmarelas;
-                teclaDoAlvo = KeyboardKey.J;
-                break;
-            
-            case 3:
-                listaDeNotas = GameScreen.listaNotasAzuis;
-                teclaDoAlvo = KeyboardKey.K;
-                break;
-            
-            case 4:
-                listaDeNotas = GameScreen.listaNotasLaranjas;
-                teclaDoAlvo = KeyboardKey.L;
-                break;
-        }
-        // Console.WriteLine(idDeCor);
-
-        alvoPressionado = Raylib.IsKeyDown(teclaDoAlvo);
-        if(alvoPressionado) {
-            foreach(IGameObject nota in listaDeNotas) {
-                if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitRuim) {
-                    string textoASerEscrito;
-                    if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitBom) {
-                        ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
-                        if (Vector2.Distance(posicaoObjeto, nota.posicaoObjeto) <= toleranciaHitOtimo) {
-                            textoASerEscrito = "Great";
-                            ParticleManager.CarregarParticulasAleatorias(cor, posicaoObjeto);
-                        } else{
-                            textoASerEscrito = "Good";
-                        }
-                    } else {
-                        textoASerEscrito = "Bad";
-                    }
-                    RegistrarPontuacaoProGameManager(textoASerEscrito);
-                    nota.excluirObjeto = true;
-                } else {
-                }
-            }
-        }
+    public void SetPressed(bool isPressed) {
+        alvoPressionado = isPressed;
     }
 
     public void Draw() {
-        // Raylib.DrawTexture(texturaNota, (int)posicaoObjeto.X, (int)posicaoObjeto.Y, Color.White);
-        // Raylib.UnloadTexture(texturaNota);
-        // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, raioAlvo, cor);
-
         if (textura.Id == 0) {
             Load();
         }
 
-        // animação quando o alvo é pressionado
         if (alvoPressionado) {
-            Raylib.DrawEllipseV(posicaoObjeto, (textura.Width-5)/2, (textura.Height-5)/2, cor);
+            Raylib.DrawEllipseV(posicaoObjeto, (textura.Width - 5) / 2, (textura.Height - 5) / 2, cor);
         }
 
-        Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
-        // Raylib.DrawPixelV(vetorDaTextura, Color.Red);
+        Vector2 vetorDaTextura = new Vector2(
+            posicaoObjeto.X - textura.Width / 2,
+            posicaoObjeto.Y - textura.Height / 2
+        );
+
         Raylib.DrawTextureV(textura, vetorDaTextura, cor);
     }
-
-    public void RegistrarPontuacaoProGameManager(string pontuacao) {
-        Vector2 posicaoPalavraNotaV = new Vector2(posicaoObjeto.X, posicaoObjeto.Y + GameScreen.offsetY / 2);
-        GameManager.RegistrarPontuacao(pontuacao, posicaoPalavraNotaV);
-    }
-
 }

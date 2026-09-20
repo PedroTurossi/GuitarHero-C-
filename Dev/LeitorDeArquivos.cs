@@ -8,17 +8,6 @@ public class Arquivo {
 }
 
 class LeitorDeArquivos {
-    public Arquivo arquivo;
-
-    string[] arquivosDoDiretorio;
-
-    public LeitorDeArquivos() {
-        // string jsonString = File.ReadAllText(caminhoDoArquivo);
-        // Arquivo arq = JsonSerializer.Deserialize<Arquivo>(jsonString);
-        // arq.notas.Add([-1f, 0f, 0f]);
-        // arquivo = arq;
-    }
-
     public static string[] LerDiretorio(string diretorio) {
         string[] arquivos = Directory.GetFiles(diretorio, "*.json");
         return arquivos;

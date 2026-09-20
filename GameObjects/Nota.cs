@@ -7,92 +7,23 @@ class Nota : IGameObject {
     public static Texture2D textura { get; set; }
     public Vector2 posicaoObjeto { get; set; } = Vector2.Zero;
 
-    public static float velocidadeDeMovimento = 500f;
+    public int Lane { get; }
+    public bool Missed { get; private set; }
+    public bool MissRegistered { get; set; }
 
-    Vector2 posicaoDoAlvo = Vector2.Zero;
+    private readonly float velocidadeDeMovimento;
+    private readonly int screenHeight;
+    private readonly int targetOffsetY;
 
-    public int numeroDoAlvo;
+    public Nota(int lane, GameSettings settings, GameplaySession session) {
+        Lane = lane;
+        velocidadeDeMovimento = settings.NoteSpeed;
+        screenHeight = settings.ScreenHeight;
+        targetOffsetY = settings.TargetOffsetY;
 
-    public float timer;
-    
-
-    // teste para teleguiado
-    
-
-    public Nota (int numeroDoAlvo = -1) {
-        timer = 0f;
-        //  vo larga aleatorio pra teste mesmo xd
-        if (numeroDoAlvo == -1) {
-            Random rand = new Random();
-            numeroDoAlvo = rand.Next(0,5);
-        }
-        
-
-
-        float posicaoXDoAlvo = GameScreen.offsetX + ((numeroDoAlvo==0) ? 0 : ( ((Program.larguraTela - (GameScreen.offsetX*2)) / (4)) * numeroDoAlvo ));
-        float posicaoYDoAlvo = Program.alturaTela - GameScreen.offsetY;
-
-        posicaoDoAlvo = new Vector2((int)posicaoXDoAlvo, (int)posicaoYDoAlvo);
-
-        posicaoObjeto = new Vector2(posicaoXDoAlvo, -GameScreen.offsetY);
-
-
-        switch(numeroDoAlvo) {
-            case 0:
-                GameScreen.listaNotasVerdes.Add(this);
-                break;
-            
-            case 1:
-                GameScreen.listaNotasVermelhas.Add(this);
-                break;
-
-            case 2:
-                GameScreen.listaNotasAmarelas.Add(this);
-                break;
-            
-            case 3:
-                GameScreen.listaNotasAzuis.Add(this);
-                break;
-            
-            case 4:
-                GameScreen.listaNotasLaranjas.Add(this);
-                break;
-        }
-
-        // DEBUG VISUAL - COLISÃO 
-        // Vector2 posicaoOtima = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitOtimo);
-        // Linha linhaOtima = new Linha();
-        // linhaOtima.SetPosicao(posicaoOtima, Color.White);
-        // GameScreen.objetosDoJogo.Add(linhaOtima);
-        
-        // Vector2 posicaoOtima2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitOtimo);
-        // Linha linhaOtima2 = new Linha();
-        // linhaOtima2.SetPosicao(posicaoOtima2, Color.White);
-        // GameScreen.objetosDoJogo.Add(linhaOtima2);
-
-        
-
-        // Vector2 posicaoBoa = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitBom);
-        // Linha linhaBoa = new Linha();
-        // linhaBoa.SetPosicao(posicaoBoa, Color.DarkGreen);
-        // GameScreen.objetosDoJogo.Add(linhaBoa);
-        
-        // Vector2 posicaoBoa2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitBom);
-        // Linha linhaBoa2 = new Linha();
-        // linhaBoa2.SetPosicao(posicaoBoa2, Color.DarkGreen);
-        // GameScreen.objetosDoJogo.Add(linhaBoa2);
-        
-
-        // Vector2 posicaoRuim = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo - Alvo.toleranciaHitRuim);
-        // Linha linhaRuim = new Linha();
-        // linhaRuim.SetPosicao(posicaoRuim, Color.White);
-        // GameScreen.objetosDoJogo.Add(linhaRuim);
-
-        // Vector2 posicaoRuim2 = new Vector2(posicaoXDoAlvo, posicaoYDoAlvo + Alvo.toleranciaHitRuim);
-        // Linha linhaRuim2 = new Linha();
-        // linhaRuim2.SetPosicao(posicaoRuim2, Color.White);
-        // GameScreen.objetosDoJogo.Add(linhaRuim2);
-
+        Vector2 targetPosition = session.GetTargetPosition(lane, settings);
+        posicaoObjeto = new Vector2(targetPosition.X, -settings.TargetOffsetY);
+        cor = LaneColor.GetColor(lane);
     }
 
     public void Load() {
@@ -104,39 +35,26 @@ class Nota : IGameObject {
     }
 
     public void Update(float dt) {
-        Vector2 direcao = new Vector2(0,1);
+        Vector2 direcao = new Vector2(0, 1);
         Vector2 movimento = direcao * velocidadeDeMovimento * dt;
         posicaoObjeto += movimento;
-        timer += dt;
-        
 
-        if (posicaoObjeto.Y > Program.alturaTela + GameScreen.offsetY) {
+        if (posicaoObjeto.Y > screenHeight + targetOffsetY) {
+            Missed = true;
             excluirObjeto = true;
-            
-            string texto1 = "Miss";
-            // Vector2 vetorDaPalavraErro = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
-            // WordsManager.AdicionarPalavra(vetorDaPalavraErro, 14, texto1, Color.Gray, true);
-            RegistrarPontuacaoProGameManager(texto1);
         }
     }
 
     public void Draw() {
-        // Console.WriteLine(textura.Id);
         if (textura.Id == 0) {
             Load();
         }
 
-        Vector2 vetorDaTextura = new Vector2((posicaoObjeto.X - (textura.Width/2)), (posicaoObjeto.Y - (textura.Height/2)));
+        Vector2 vetorDaTextura = new Vector2(
+            posicaoObjeto.X - textura.Width / 2,
+            posicaoObjeto.Y - textura.Height / 2
+        );
+
         Raylib.DrawTextureV(textura, vetorDaTextura, Color.White);
-
-        // fazer alguma animação bacana depois
-        // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 10f, Color.RayWhite);
-        // Raylib.DrawCircle((int)posicaoObjeto.X, (int)posicaoObjeto.Y, 1f, Color.Red);
-    }
-
-    public void RegistrarPontuacaoProGameManager(string pontuacao) {
-        Vector2 vetorParaEscrita = new Vector2(posicaoDoAlvo.X, posicaoDoAlvo.Y + GameScreen.offsetY / 2);
-        GameManager.RegistrarPontuacao(pontuacao, vetorParaEscrita);
     }
 }
-
