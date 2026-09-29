@@ -22,7 +22,10 @@ class Alvo : IGameObject {
     }
 
     public static void Unload() {
-        Raylib.UnloadTexture(textura);
+        if (textura.Id != 0) {
+            Raylib.UnloadTexture(textura);
+            textura = default;
+        }
     }
 
     public void Update(float dt) {

@@ -6,9 +6,11 @@ class ScreenManager {
         context = gameContext;
     }
 
-    public static void ChangeScreen(IScreen novaTela) {
+    // A fábrica é importante: a tela anterior precisa ser descarregada antes
+    // de a nova tela carregar recursos estáticos compartilhados.
+    public static void ChangeScreen(Func<IScreen> criarTela) {
         telaAtual?.Unload();
-        telaAtual = novaTela;
+        telaAtual = criarTela();
     }
 
     public static void Update(float deltaTime) {

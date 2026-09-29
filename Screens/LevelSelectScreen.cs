@@ -2,63 +2,42 @@ using System.Numerics;
 using Raylib_cs;
 
 class LevelSelectScreen : IScreen {
+    private readonly Menu menu;
 
-    List<IGameObject> listaDeObjetos = new List<IGameObject>();
+    public LevelSelectScreen(GameContext context) {
+        string[] arquivos = LeitorDeArquivos.LerDiretorio(context.AssetsPath);
 
+        float buttonWidth = context.ScreenWidth * 0.4f;
+        float buttonHeight = context.ScreenHeight * 0.08f;
+        float positionX = (context.ScreenWidth - buttonWidth) / 2f;
+        float positionY = context.ScreenHeight * 0.05f;
+        float spacing = context.ScreenHeight * 0.02f;
 
-    public LevelSelectScreen() {
-        // agora só falta obter uma lista com todos os arquivos de músicas
-        // e distribuir esses objetos automaticamente dentro de um espaço da
-        // tela de maneira responsiva fazendo com que entremos nas telas de jogos
-        // de acordo com os diferentes arquivos
+        menu = new Menu(
+            new Vector2(positionX, positionY),
+            (int)buttonWidth,
+            (int)buttonHeight,
+            (int)spacing
+        );
 
-
-        string[] arquivos = LeitorDeArquivos.LerDiretorio(Program.localDosArquivos);
-
-        float larguraBotao = Program.larguraTela * 0.4f;
-        float alturaBotao = Program.alturaTela * 0.08f;
-
-        float posicaoX = (Program.larguraTela - larguraBotao) / 2f;
-        float espacamento = Program.alturaTela * 0.02f;
-        
-        for (int i = 0; i < arquivos.Length; i++) {
-            float posicaoY = (Program.alturaTela * 0.05f) + (i * (alturaBotao + espacamento));
-            
-            string arquivoAtual = arquivos[i];
+        foreach (string arquivoAtual in arquivos) {
             string textoDoBotao = Path.GetFileNameWithoutExtension(arquivoAtual);
-
-            listaDeObjetos.Add(
-                new Botao(
-                    new Vector2(posicaoX, posicaoY),
-                    (int)alturaBotao,
-                    (int)larguraBotao,
-                    Color.Gray,
-                    textoDoBotao,
-                    () => ScreenManager.ChangeScreen(new GameScreen(arquivoAtual))
-                )
+            menu.AddButton(
+                textoDoBotao,
+                () => ScreenManager.ChangeScreen(() => new GameScreen(arquivoAtual, context))
             );
         }
-
     }
-    
+
     public void Update(float deltaTime, GameContext context) {
-        foreach(IGameObject objeto in listaDeObjetos) {
-            objeto.Update(deltaTime);
-        }
+        menu.Update(context);
     }
-
 
     public void Draw(GameContext context) {
         Raylib.ClearBackground(Color.DarkGray);
-
-        foreach(IGameObject objeto in listaDeObjetos) {
-            objeto.Draw();
-        }
+        menu.Draw();
     }
-
 
     public void Unload() {
-        // throw new NotImplementedException();
     }
-
 }

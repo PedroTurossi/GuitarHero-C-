@@ -5,7 +5,6 @@ using System;
 class Program {
     public const int larguraTela = 800;
     public const int alturaTela = 400;
-    public static Vector2 posicaoDoMouse;
     public static string localDosArquivos = "Files/";
 
     static void Main() {
@@ -18,12 +17,11 @@ class Program {
         AudioManager.InicializarAudioManager();
 
         ScreenManager.Inicializar(context);
-        ScreenManager.ChangeScreen(new LevelSelectScreen());
+        ScreenManager.ChangeScreen(() => new LevelSelectScreen(context));
 
-        while(!Raylib.WindowShouldClose()) {
+        while(!Raylib.WindowShouldClose() && !context.ExitRequested) {
             float deltaTime = Raylib.GetFrameTime();
             context.UpdateInput();
-            posicaoDoMouse = context.Input.MousePosition;
             ScreenManager.Update(deltaTime);
 
             Raylib.BeginDrawing();

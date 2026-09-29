@@ -8,6 +8,7 @@ static class LaneColor {
             2 => Color.Yellow,
             3 => Color.Blue,
             4 => Color.Orange,
+            // 5 => Color.Purple,
             _ => Color.White
         };
     }

@@ -38,8 +38,13 @@ class ParticleManager {
     }
 
     public static void DescarregarTexturas() {
+        // As partículas guardam uma cópia do Texture2D. Removê-las evita que
+        // uma tela nova tente desenhar uma textura já descarregada.
+        listaDeParticulas.Clear();
         foreach(Texture2D textura in listaDeTexturas) {
-            Raylib.UnloadTexture(textura);
+            if (textura.Id != 0) {
+                Raylib.UnloadTexture(textura);
+            }
         }
         listaDeTexturas.Clear();
     }

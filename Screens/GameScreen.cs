@@ -2,21 +2,25 @@ using System.Numerics;
 using Raylib_cs;
 
 class GameScreen : IScreen {
+    private readonly string levelPath;
     private readonly GameplaySession session;
     private readonly NoteSpawner noteSpawner;
     private readonly HitJudge hitJudge = new();
+    private readonly Menu pauseMenu;
 
-    public GameScreen(string levelASerJogado) {
+    public GameScreen(string levelASerJogado, GameContext context) {
+        levelPath = levelASerJogado;
         ParticleManager.CarregarTexturas();
 
         Song song = new SongLoader().Load(levelASerJogado);
         session = new GameplaySession(song);
         noteSpawner = new NoteSpawner(song);
 
-        CreateTargets(new GameSettings(Program.larguraTela, Program.alturaTela, Program.localDosArquivos));
+        CreateTargets(context.Settings);
 
-        string musicPath = Path.Combine(Program.localDosArquivos, song.AudioFile);
+        string musicPath = Path.Combine(context.AssetsPath, song.AudioFile);
         AudioManager.DefinirMusica(musicPath);
+        pauseMenu = CreatePauseMenu(context);
     }
 
     public void Update(float deltaTime, GameContext context) {
@@ -26,10 +30,7 @@ class GameScreen : IScreen {
                 break;
 
             case GameState.Pausado:
-                if (context.Input.PausePressed) {
-                    session.State = GameState.Jogando;
-                    AudioManager.DespausarMusica();
-                }
+                UpdatePauseMenu(context);
                 break;
         }
     }
@@ -44,8 +45,7 @@ class GameScreen : IScreen {
         AudioManager.UpdateMusica();
 
         if (context.Input.PausePressed) {
-            session.State = GameState.Pausado;
-            AudioManager.PausarMusica();
+            PauseGame();
             return;
         }
 
@@ -66,8 +66,8 @@ class GameScreen : IScreen {
         WordsManager.UpdatePalavras(deltaTime);
     }
 
-    private void UpdatePauseMenu(float deltaTime, GameContext context) {
-        
+    private void UpdatePauseMenu(GameContext context) {
+        pauseMenu.Update(context);
     }
 
     private void UpdateNotes(float deltaTime, GameContext context) {
@@ -128,10 +128,47 @@ class GameScreen : IScreen {
         Color overlay = Color.Black;
         overlay.A = 80;
         Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth, context.ScreenHeight), overlay);
-        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth/2.5f, context.ScreenHeight), overlay);
-        Raylib.DrawText("PAUSADO", context.ScreenWidth / 5 - 58, context.ScreenHeight / 2 - 12, 24, Color.White);
+        Raylib.DrawRectangleV(Vector2.Zero, new Vector2(context.ScreenWidth / 2.5f, context.ScreenHeight), overlay);
+        Raylib.DrawText("PAUSADO", context.ScreenWidth / 5 - 58, 42, 24, Color.White);
+        pauseMenu.Draw();
     }
 
+    private Menu CreatePauseMenu(GameContext context) {
+        int menuWidth = (int)(context.ScreenWidth * 0.32f);
+        int menuHeight = (int)(context.ScreenHeight * 0.08f);
+        int menuX = (int)(context.ScreenWidth * 0.04f);
+        int menuY = 90;
+
+        Menu menu = new(
+            new Vector2(menuX, menuY),
+            menuWidth,
+            menuHeight,
+            (int)(context.ScreenHeight * 0.02f)
+        );
+
+        menu.AddButton("Continuar", ResumeGame);
+        menu.AddButton("Reiniciar", () => ScreenManager.ChangeScreen(() => new GameScreen(levelPath, context)));
+        menu.AddButton("Voltar", () => ScreenManager.ChangeScreen(() => new LevelSelectScreen(context)));
+        menu.AddButton("Sair", context.RequestExit);
+        menu.BackRequested = ResumeGame;
+
+        return menu;
+    }
+
+    private void PauseGame() {
+        session.State = GameState.Pausado;
+        AudioManager.PausarMusica();
+    }
+
+    private void ResumeGame() {
+        session.State = GameState.Jogando;
+        AudioManager.DespausarMusica();
+    }
+
+
+    public void Load() {
+        
+    }
     public void Unload() {
         Alvo.Unload();
         Nota.Unload();

@@ -287,11 +287,72 @@ Com o tempo, ele pode ser removido se nao for mais usado.
 
 ## Proximo Passo Recomendado
 
-O proximo passo natural seria remover os ultimos acessos globais antigos:
+Os proximos passos naturais sao:
 
-- trocar `Program.posicaoDoMouse` por `context.Input.MousePosition` dentro de `Botao`;
 - transformar `AudioManager`, `ParticleManager` e `WordsManager` em objetos de contexto ou sistemas de sessao;
 - mover assets para uma estrutura mais clara, como `Files/Images`, `Files/Songs` e `Files/Charts`;
 - remover `GameManager` se ele nao for mais usado.
 
 Nao precisa fazer tudo de uma vez. A direcao importante e: estado de partida fica em `GameplaySession`; ambiente geral fica em `GameContext`; regras de gameplay ficam em sistemas como `HitJudge` e `NoteSpawner`.
+
+## Arquitetura de menus
+
+Menus sao componentes reutilizaveis, e nao telas completas. Uma tela como `LevelSelectScreen` ou `GameScreen` possui um `Menu` e decide quando ele deve ser atualizado e desenhado.
+
+### MenuButton
+
+Arquivo: `GameObjects/Menus/MenuButton.cs`
+
+`MenuButton` representa uma opcao individual do menu. Ele guarda o texto, a area clicavel e uma acao executada quando a opcao e confirmada.
+
+Responsabilidades:
+
+- guardar o texto da opcao;
+- guardar os limites do botao;
+- verificar se o mouse esta sobre o botao;
+- desenhar o estado normal ou selecionado;
+- executar a acao associada.
+
+O botao nao decide como o teclado navega entre as opcoes. Essa responsabilidade pertence ao `Menu`.
+
+### Menu
+
+Arquivo: `GameObjects/Menus/Menu.cs`
+
+`Menu` organiza uma lista vertical de `MenuButton`. Ele centraliza o comportamento comum de menus do jogo.
+
+Responsabilidades:
+
+- adicionar opcoes com `AddButton(texto, acao)`;
+- calcular automaticamente a posicao dos botoes;
+- selecionar uma opcao com hover do mouse;
+- navegar com setas ou `W`/`S`;
+- confirmar com clique, `Enter` ou `Space`;
+- executar uma acao opcional de voltar com `BackRequested`;
+- desenhar todos os botoes.
+
+O `Menu` recebe `GameContext` no metodo `Update`. Assim, ele usa o `InputState` sem acessar `Raylib` ou `Program` diretamente. Para criar um menu novo, a tela precisa apenas instanciar um `Menu`, adicionar botoes e chamar `Update` e `Draw` no momento adequado.
+
+### Menu de pausa
+
+O menu de pausa pertence ao `GameScreen`, mas nao substitui a tela. Quando `GameplaySession.State` e `Pausado`, a partida deixa de ser atualizada, a musica e pausada e o `Menu` e desenhado sobre o gameplay.
+
+As opcoes atuais sao:
+
+- `Continuar`: retoma a sessao e a musica;
+- `Reiniciar`: cria novamente o `GameScreen` usando o mesmo mapa;
+- `Voltar`: retorna para `LevelSelectScreen`;
+- `Sair`: marca `GameContext.ExitRequested`, e o loop principal encerra a janela com seguranca.
+
+Essa diferenca e importante: `ScreenManager.ChangeScreen` deve ser usado para trocar de tela, enquanto o menu de pausa deve ser usado como componente sobreposto quando a partida precisa continuar existindo.
+
+### Fluxo de input dos menus
+
+`InputState` traduz as entradas do Raylib para o jogo:
+
+- `MenuUpPressed`: seta para cima ou `W`;
+- `MenuDownPressed`: seta para baixo ou `S`;
+- `MenuConfirmPressed`: `Enter` ou `Space`;
+- `PausePressed`: `Escape`, usado para pausar e para voltar/fechar o menu de pausa.
+
+Com isso, telas diferentes compartilham a mesma navegacao e novas telas podem reutilizar `Menu` sem duplicar regras de mouse e teclado.

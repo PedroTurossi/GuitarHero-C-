@@ -15,6 +15,7 @@ class HitJudge {
             }
 
             TryJudgeLane(lane, session, context);
+            // Console.Write(lane);
         }
     }
 

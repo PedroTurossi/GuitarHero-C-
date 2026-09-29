@@ -18,6 +18,7 @@ class GameSettings {
     public KeyboardKey[] LaneKeys { get; } = [
         KeyboardKey.A,
         KeyboardKey.S,
+        // KeyboardKey.D,
         KeyboardKey.J,
         KeyboardKey.K,
         KeyboardKey.L

@@ -5,6 +5,7 @@ class GameContext {
     public int ScreenWidth => Settings.ScreenWidth;
     public int ScreenHeight => Settings.ScreenHeight;
     public string AssetsPath => Settings.AssetsPath;
+    public bool ExitRequested { get; private set; }
 
     public GameContext(GameSettings settings) {
         Settings = settings;
@@ -12,5 +13,9 @@ class GameContext {
 
     public void UpdateInput() {
         Input.Update(Settings);
+    }
+
+    public void RequestExit() {
+        ExitRequested = true;
     }
 }

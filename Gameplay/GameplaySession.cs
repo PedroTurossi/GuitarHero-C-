@@ -9,7 +9,8 @@ class GameplaySession {
     public List<IGameObject> Objects { get; } = new();
     public List<Alvo> Targets { get; } = new();
     public List<Nota>[] NotesByLane { get; } = [
-        new(), new(), new(), new(), new()
+        // por enquanto, se houver mais lanes, precisa colocar um "new()" extra
+        new(), new(), new(), new(), new(), new()
     ];
 
     public GameplaySession(Song song) {
