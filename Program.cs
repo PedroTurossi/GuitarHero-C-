@@ -16,8 +16,14 @@ class Program {
 
         AudioManager.InicializarAudioManager();
 
+        // Carrega os recursos compartilhados antes do loop. Assim, o primeiro
+        // frame da fase não precisa fazer upload de texturas para a GPU.
+        Alvo.CarregarTextura();
+        Nota.CarregarTextura();
+        ParticleManager.CarregarTexturas();
+
         ScreenManager.Inicializar(context);
-        ScreenManager.ChangeScreen(() => new LevelSelectScreen(context));
+        ScreenManager.ChangeScreen(() => new MainMenuScreen(context));
 
         while(!Raylib.WindowShouldClose() && !context.ExitRequested) {
             float deltaTime = Raylib.GetFrameTime();
@@ -30,6 +36,13 @@ class Program {
         }
 
         ScreenManager.UnloadTextures();
+
+        // A tela atual pode ser o menu, que não possui recursos próprios para
+        // descarregar os assets compartilhados.
+        Alvo.Unload();
+        Nota.Unload();
+        ParticleManager.DescarregarTexturas();
+        AudioManager.UnloadMusica();
 
         Raylib.CloseAudioDevice();
         Raylib.CloseWindow();            

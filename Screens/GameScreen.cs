@@ -10,6 +10,9 @@ class GameScreen : IScreen {
 
     public GameScreen(string levelASerJogado, GameContext context) {
         levelPath = levelASerJogado;
+        // As texturas são compartilhadas entre as fases. A chamada é
+        // idempotente e também protege caso uma GameScreen seja criada sem
+        // passar pelo carregamento inicial.
         ParticleManager.CarregarTexturas();
 
         Song song = new SongLoader().Load(levelASerJogado);
@@ -149,6 +152,7 @@ class GameScreen : IScreen {
         menu.AddButton("Continuar", ResumeGame);
         menu.AddButton("Reiniciar", () => ScreenManager.ChangeScreen(() => new GameScreen(levelPath, context)));
         menu.AddButton("Voltar", () => ScreenManager.ChangeScreen(() => new LevelSelectScreen(context)));
+        menu.AddSpacing(10);
         menu.AddButton("Sair", context.RequestExit);
         menu.BackRequested = ResumeGame;
 
@@ -170,9 +174,8 @@ class GameScreen : IScreen {
         
     }
     public void Unload() {
-        Alvo.Unload();
-        Nota.Unload();
-        ParticleManager.DescarregarTexturas();
+        // Alvo, Nota e partículas são assets compartilhados entre as telas.
+        // Eles só devem ser descarregados no encerramento do programa.
         AudioManager.UnloadMusica();
     }
 }

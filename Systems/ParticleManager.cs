@@ -31,6 +31,14 @@ class ParticleManager {
     }
     
     public static void CarregarParticulasAleatorias(Color corDasParticulas, Vector2 posicaoBase) {
+        if (listaDeTexturas.Count == 0) {
+            CarregarTexturas();
+        }
+
+        if (listaDeTexturas.Count == 0) {
+            return;
+        }
+
         for (int i = quantidadeMinimaDeParticulas; i < Random.Shared.Next(quantidadeMaximaDeParticulas); i++) {
             Particle novaParticula = new Particle(corDasParticulas, posicaoBase);
             listaDeParticulas.Add(novaParticula);

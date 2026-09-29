@@ -4,8 +4,16 @@ using Raylib_cs;
 class AudioManager {
     private static Music musicaASerTocada;
     private static bool musicaCarregada;
+    public static float Volume { get; private set; } = 1f;
+
     public static void InicializarAudioManager() {
         Raylib.InitAudioDevice();
+        Raylib.SetMasterVolume(Volume);
+    }
+
+    public static void DefinirVolume(float volume) {
+        Volume = Math.Clamp(volume, 0f, 1f);
+        Raylib.SetMasterVolume(Volume);
     }
 
     public static void DefinirMusica(String stringLocalDaMusica) {

@@ -18,6 +18,14 @@ class Alvo : IGameObject {
     }
 
     public void Load() {
+        CarregarTextura();
+    }
+
+    public static void CarregarTextura() {
+        if (textura.Id != 0) {
+            return;
+        }
+
         textura = Raylib.LoadTexture("Files\\AlvoBase.png");
     }
 

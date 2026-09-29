@@ -20,6 +20,8 @@ class LevelSelectScreen : IScreen {
             (int)spacing
         );
 
+        menu.AddSpacing(20);
+
         foreach (string arquivoAtual in arquivos) {
             string textoDoBotao = Path.GetFileNameWithoutExtension(arquivoAtual);
             menu.AddButton(
@@ -27,6 +29,11 @@ class LevelSelectScreen : IScreen {
                 () => ScreenManager.ChangeScreen(() => new GameScreen(arquivoAtual, context))
             );
         }
+        menu.AddSpacing(15);
+        menu.AddButton("Voltar", () => ScreenManager.ChangeScreen(() => new MainMenuScreen(context)));
+
+
+        menu.BackRequested = () => ScreenManager.ChangeScreen(() => new MainMenuScreen(context));
     }
 
     public void Update(float deltaTime, GameContext context) {

@@ -3,11 +3,13 @@ using Raylib_cs;
 
 class Menu {
     private readonly List<MenuButton> buttons = new();
+    private readonly List<int> extraSpacingBeforeButton = new();
     private readonly Vector2 position;
     private readonly int buttonWidth;
     private readonly int buttonHeight;
     private readonly int spacing;
     private int selectedIndex;
+    private int pendingSpacing;
 
     public Action? BackRequested { get; set; }
 
@@ -21,8 +23,17 @@ class Menu {
     public MenuButton AddButton(string text, Action action) {
         MenuButton button = new(text, action);
         buttons.Add(button);
+        extraSpacingBeforeButton.Add(pendingSpacing);
         UpdateButtonBounds();
         return button;
+    }
+
+    // Adiciona espaço apenas antes do próximo botão. Isso permite separar
+    // visualmente grupos de opções sem criar um botão falso e sem afetar a
+    // navegação do menu.
+    public void AddSpacing(int pixels) {
+        pendingSpacing += Math.Max(0, pixels);
+        UpdateButtonBounds();
     }
 
     public void Update(GameContext context) {
@@ -68,7 +79,9 @@ class Menu {
 
     private void UpdateButtonBounds() {
         for (int i = 0; i < buttons.Count; i++) {
-            float y = position.Y + i * (buttonHeight + spacing);
+            float y = position.Y
+                + i * (buttonHeight + spacing)
+                + extraSpacingBeforeButton[i];
             buttons[i].SetBounds(new Rectangle(position.X, y, buttonWidth, buttonHeight));
         }
     }
